@@ -1,0 +1,12 @@
+- name: Update openssl
+  hosts: all
+  become: true
+  tasks:
+  - name: Gather the package facts
+    ansible.builtin.package_facts:
+      manager: auto
+  - name: Update openssl
+    ansible.builtin.package:
+      name: openssl
+      state: latest
+    when: "'openssl' in ansible_facts.packages"
