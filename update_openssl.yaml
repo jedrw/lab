@@ -5,6 +5,9 @@
   - name: Gather the package facts
     ansible.builtin.package_facts:
       manager: auto
+  - name: Print packages
+    ansible.builtin.debug:
+      msg: "{{ ansible_facts.packages['openssl'] }}"
   - name: Update openssl
     ansible.builtin.package:
       name: openssl

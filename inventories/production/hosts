@@ -18,6 +18,8 @@ all:
           ansible_host: 192.168.20.4
         qdocker:
           ansible_host: 192.168.20.7
+        qgentoo:
+          ansible_host: qgentoo
       vars:
         ansible_user: jedrw
     k3s:
