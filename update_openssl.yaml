@@ -5,15 +5,39 @@
   - name: Gather the package facts
     ansible.builtin.package_facts:
       manager: auto
-  - name: Print packages
+
+  - name: Print openssl package facts
     ansible.builtin.debug:
-      msg: "{{ ansible_facts.packages['openssl'] }}"
+      msg:
+        - "{{ ansible_facts.packages['openssl'] }}"
+        - "{{ ansible_facts.packages['libssl3'] }}"
+
   - name: Update apt cache
     ansible.builtin.apt:
       update_cache: true
     when: ansible_facts['os_family'] == "Debian"
+
+  - name: Update yum cache
+    ansible.builtin.yum:
+      update_cache: true
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Update openssl (Gentoo)
+    community.general.portage:
+      package: openssl
+      sync: true
+      update: true
+      deep: true
+    when: "'openssl' in ansible_facts.packages and ansible_facts['os_family'] == 'Gentoo'"
+
   - name: Update openssl
     ansible.builtin.package:
       name: openssl
       state: latest
-    when: "'openssl' in ansible_facts.packages"
+    when: "'openssl' in ansible_facts.packages and ansible_facts['os_family'] != 'Gentoo'"
+
+  - name: Update libssl3
+    ansible.builtin.package:
+      name: libssl3
+      state: latest
+    when: "'libssl3' in ansible_facts.packages and ansible_facts['os_family'] != 'Gentoo'"

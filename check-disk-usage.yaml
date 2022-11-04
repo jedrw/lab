@@ -1,0 +1,12 @@
+- name: Check disk usage
+  hosts: all
+  become: true
+  tasks:
+  - name: Get disk usage
+    debug:
+      msg: "{% for mount in ansible_mounts %}{% if '/snap' not in mount.mount %}{{ mount.mount }} = {{ ((1 - (mount.size_available / mount.size_total)) * 100) | round(1) }}% full\n{% endif %}{% endfor %}"
+    register: mounts
+    no_log: true
+  - name: Print disk usage
+    debug:
+      msg: "{{ mounts.msg.split('\n')[:-1] }}"
