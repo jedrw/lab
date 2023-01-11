@@ -1,0 +1,27 @@
+- name: Initialise proxmox node
+  hosts: proxmox-nodes
+  become: false
+  tasks:
+  - name: Add terraform role 
+    ansible.builtin.command: pveum role add terraform -privs "VM.Allocate VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.Audit VM.PowerMgmt Datastore.AllocateSpace Datastore.Audit"
+    register: output
+    changed_when: output.rc == 0
+    ignore_errors: true
+  - name: Add terraform user
+    ansible.builtin.command: pveum user add terraform@pam
+    register: output
+    changed_when: output.rc == 0
+    ignore_errors: true
+  - name: Assign role to user
+    ansible.builtin.command: pveum aclmod / -user terraform@pam -role terraform
+    register: output
+    changed_when: output.rc == 0
+    ignore_errors: true
+  - name: Create token for user
+    ansible.builtin.command: pveum user token add terraform@pam terraform --privsep=0
+    register: output
+    changed_when: output.rc == 0
+    ignore_errors: true
+  - name: Print token
+    ansible.builtin.debug:
+      msg: "{{ output }}"

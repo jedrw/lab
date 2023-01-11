@@ -1,0 +1,19 @@
+- name: Install smb packages
+  ansible.builtin.package:
+    name: samba
+    state: present
+  
+- name: Configure smbd
+  ansible.builtin.copy:
+    src: smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart smbd
+
+- name: Create smb user and set password
+  ansible.builtin.shell: "(echo {{ lookup('env', 'SMBPASSWD') }}; echo {{ lookup('env', 'SMBPASSWD') }}) | smbpasswd -a -s {{ lookup('env', 'USERNAME') }}"
+  register: output
+  changed_when: output.rc == 0
+  ignore_errors: true

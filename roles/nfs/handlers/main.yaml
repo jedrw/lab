@@ -1,0 +1,10 @@
+- name: Restart nfs-server
+  ansible.builtin.service:
+    name: nfs-server
+    state: restarted
+
+- name: Export nfs shares
+  ansible.builtin.command:
+    cmd: exportfs -a
+  register: output
+  changed_when: output.rc == 0

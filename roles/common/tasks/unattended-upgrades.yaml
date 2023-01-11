@@ -1,0 +1,22 @@
+- name: Install unattended-upgrades
+  ansible.builtin.package:
+    name: unattended-upgrades 
+    state: latest
+
+- name: Configure auto-upgrades
+  ansible.builtin.copy:
+    src: 20auto-upgrades
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart unattended-upgrades
+
+- name: Configure unattended-upgrades
+  ansible.builtin.copy:
+    src: 50unattended-upgrades
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart unattended-upgrades

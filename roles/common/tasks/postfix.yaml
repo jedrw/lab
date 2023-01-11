@@ -1,0 +1,34 @@
+- name: Install postfix and mailutils
+  ansible.builtin.package:
+    name: 
+      - postfix
+      - mailutils
+    state: latest
+
+- name: Write config from template
+  ansible.builtin.template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Postfix reload
+
+- name: Set root alias (prod)
+  ansible.builtin.lineinfile:
+    path: /etc/aliases
+    regexp: '^root:'
+    line: 'root: root@lupinelab.co.uk'
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+  notify:
+    - Newaliases
+
+- name: Set root alias (test)
+  ansible.builtin.lineinfile:
+    path: /etc/aliases
+    regexp: '^root:'
+    line: 'root: root@lupinetest'
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'test'
+  notify:
+    - Newaliases

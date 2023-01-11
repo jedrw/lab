@@ -1,0 +1,14 @@
+rclone_config_location: "/home/{{ lookup('env', 'USERNAME') }}/.config/rclone/rclone.conf"
+
+rclone_configs:
+  - name: gdrive
+    properties:
+      type: drive
+      # client_id: 12345
+      # client_secret: 67890
+      token: ' {"access_token":"{{ lookup("env", "GDRIVE_ACCESS_TOKEN") }}","token_type":"Bearer","refresh_token":"{{ lookup("env", "GDRIVE_REFRESH_TOKEN") }}","expiry":"{{ lookup("env", "GDRIVE_EXPIRY") }}"}'
+      root_folder_id: "{{ lookup('env', 'GDRIVE_ROOT_FOLDER_ID') }}"
+
+rclone_config_owner:
+   OWNER: "{{ lookup('env', 'USERNAME') }}"
+   GROUP: "{{ lookup('env', 'USERNAME') }}"

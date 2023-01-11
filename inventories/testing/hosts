@@ -3,30 +3,28 @@ all:
   children: 
     proxmox-nodes:
       hosts:
-        qtiny-01:
-          ansible_host: 192.168.20.101
-        qtiny-02:
-          ansible_host: 192.168.20.102
+        testprox:
+          ansible_host: 192.168.30.101
       vars:
         ansible_user: root
         ansible_become: false
     vms:
       hosts:
         qmail:
-          ansible_host: 192.168.20.10
+          ansible_host: 192.168.30.10
         qshare:
-          ansible_host: 192.168.20.4
+          ansible_host: 192.168.30.4
         qdocker:
-          ansible_host: 192.168.20.7
+          ansible_host: 192.168.30.7
       vars:
         ansible_user: jedrw
     k3s:
       hosts:
         qk3s-m-01:
-          ansible_host: 192.168.200.111
+          ansible_host: 192.168.30.111
         qk3s-m-02:
-          ansible_host: 192.168.200.112
+          ansible_host: 192.168.30.112
         qkourum:
-          ansible_host: 192.168.200.113
+          ansible_host: 192.168.30.113
       vars:
         ansible_user: jedrw
