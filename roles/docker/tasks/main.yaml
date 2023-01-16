@@ -18,7 +18,7 @@
 - name: Log into DockerHub
   community.docker.docker_login:
     username: "{{ lookup('env', 'REGISTRY_USERNAME') }}"
-    password: "{{ lookup('env', 'DOCKERHUB_PASSWORD') }}"
+    password: "{{ lookup('env', 'DOCKERHUB_PASSWD') }}"
     validate_certs: true
   become: false
 
@@ -26,6 +26,6 @@
   community.docker.docker_login:
     registry_url: "{{ lookup('env', 'LUPINELAB_REGISTRY_URL') }}"
     username: "{{ lookup('env', 'REGISTRY_USERNAME') }}"
-    password: "{{ lookup('env', 'LUPINELAB_REGISTRY_PASSWORD') }}"
+    password: "{{ lookup('env', 'LUPINELAB_REGISTRY_PASSWD') }}"
     validate_certs: true
   become: false
