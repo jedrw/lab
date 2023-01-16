@@ -1,0 +1,8 @@
+- name: Mount lupinedata disk
+  ansible.posix.mount:
+    src: UUID=5a5d7e53-1305-4398-9e0b-815e9d74e929
+    path: /lupinedata
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'

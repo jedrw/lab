@@ -2,35 +2,10 @@
   become: true
   vars_files:
     - roles/rclone/vars/main.yaml
-  pre_tasks:
-    - name: Mount lupinedata disk
-      ansible.posix.mount:
-        src: UUID=5a5d7e53-1305-4398-9e0b-815e9d74e929
-        path: /lupinedata
-        fstype: ext4
-        opts: defaults
-        state: present
-      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
   roles:
     - common
+    - mounts
     - smbd
     - nfs
     - stefangweichinger.ansible_rclone
-  tasks:
-    - name: Add backup cron
-      ansible.builtin.cron:
-        name: main backup
-        minute: '0'
-        hour: '0'
-        user: root
-        job: 'rsync -av --del /lupinedata/ -e "ssh -i /home/jedrw/.ssh/id_rsa" jedrw@qkourum.lupinedmz:/lupinebackup/lupinedata/'
-      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
-    - name: Add gdrive backup cron
-      ansible.builtin.cron:
-        name: gdrive backup
-        minute: '0'
-        hour: '1'
-        day: '1'
-        user: "{{ lookup('env', 'USERNAME')  }}"
-        job: 'rclone sync -v /lupinedata/data gdrive:lupinelabbackup/data --exclude=Downloads/** --exclude=.Trash-1000/** --create-empty-src-dirs --delete-before'
-      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+    - cron

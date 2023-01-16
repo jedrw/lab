@@ -1,0 +1,28 @@
+- name: Mount docker disks
+  ansible.posix.mount:
+    src: "UUID={{ item.uuid }}"
+    path: "{{ item.path }}"
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  loop:
+    - { uuid: '81cd81d7-768c-411f-a57f-d8c794253535', path: '/home/jedrw/docker/influxdb' }
+    - { uuid: '14205086-305d-4f25-9177-4d75de6fa5ad', path: '/home/jedrw/docker/jenkins' }
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+
+- name: Add .smbcredentials file
+  ansible.builtin.template:
+    src: .smbcredentials.j2
+    dest: "/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials"
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Mount backup share
+  ansible.posix.mount:
+    src: //qshare.lupinelab/data/Backup 
+    path: /mnt/Backup 
+    fstype: cifs 
+    opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
+    state: mounted
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
