@@ -3,6 +3,22 @@
     name: nfs-kernel-server
     state: latest
 
+- name: Create nfs shares (testing only)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ lookup('env', 'USERNAME') }}"
+    group: "{{ lookup('env', 'USERNAME') }}"
+    mode: 0775
+  loop:
+    - /lupinedata/k3s/gitea
+    - /lupinedata/k3s/grenleaf.repair
+    - /lupinedata/k3s/ntexpenses
+    - /lupinedata/k3s/ombi
+    - /lupinedata/k3s/portainer
+    - /lupinedata/k3s/registry
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'test'
+
 - name: Configure nfs exportfs
   ansible.builtin.copy:
     src: exports

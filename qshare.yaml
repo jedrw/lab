@@ -2,19 +2,21 @@
   become: true
   vars_files:
     - roles/rclone/vars/main.yaml
+  pre_tasks:
+    - name: Mount lupinedata disk
+      ansible.posix.mount:
+        src: UUID=5a5d7e53-1305-4398-9e0b-815e9d74e929
+        path: /lupinedata
+        fstype: ext4
+        opts: defaults
+        state: present
+      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
   roles:
     - common
     - smbd
     - nfs
     - stefangweichinger.ansible_rclone
   tasks:
-    - name: Mount lupinedata disk
-      ansible.posix.mount:
-        path: /lupinedata
-        src: UUID=5a5d7e53-1305-4398-9e0b-815e9d74e929
-        fstype: ext4
-        opts: defaults
-        state: present
     - name: Add backup cron
       ansible.builtin.cron:
         name: main backup
