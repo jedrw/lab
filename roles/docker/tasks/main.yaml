@@ -29,3 +29,7 @@
     password: "{{ lookup('env', 'LUPINELAB_REGISTRY_PASSWD') }}"
     validate_certs: true
   become: false
+
+- name: Install dockerupdate
+  ansible.builtin.include_tasks:
+    file: "dockerupdate.yaml" 
