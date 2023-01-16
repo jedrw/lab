@@ -1,0 +1,47 @@
+- hosts: qdocker
+  become: true
+  pre_tasks:
+    - name: Mount disks
+      ansible.posix.mount:
+        src: "UUID={{ item.uuid }}"
+        path: "{{ item.path }}"
+        fstype: ext4
+        opts: defaults
+        state: present
+      loop:
+        - { uuid: '81cd81d7-768c-411f-a57f-d8c794253535', path: '/home/jedrw/docker/influxdb' }
+        - { uuid: '14205086-305d-4f25-9177-4d75de6fa5ad', path: '/home/jedrw/docker/jenkins' }
+      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+    - name: Configure DMZ ethernet adapter
+      ansible.builtin.template:
+        src: roles/docker/templates/99-ens19.yaml.j2
+        dest: /etc/netplan/99-ens19.yaml
+        owner: root
+        group: root
+        mode: 0644
+    - name: Netplan apply
+      ansible.builtin.command: 
+        cmd: netplan apply
+      register: output
+      changed_when: output.rc == 0
+  roles:
+    - common
+    - docker
+  tasks:
+    - name: Add backup cron
+      ansible.builtin.cron:
+        name: main backup
+        minute: '0'
+        hour: '0'
+        user: root
+        job: 'rsync -av --del /lupinedata/ -e "ssh -i /home/jedrw/.ssh/id_rsa" jedrw@qkourum.lupinedmz:/lupinebackup/lupinedata/'
+      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+    - name: Add gdrive backup cron
+      ansible.builtin.cron:
+        name: gdrive backup
+        minute: '0'
+        hour: '1'
+        day: '1'
+        user: "{{ lookup('env', 'USERNAME')  }}"
+        job: 'rclone sync -v /lupinedata/data gdrive:lupinelabbackup/data --exclude=Downloads/** --exclude=.Trash-1000/** --create-empty-src-dirs --delete-before'
+      when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
