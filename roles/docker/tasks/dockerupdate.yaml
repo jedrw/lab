@@ -25,9 +25,9 @@
 - name: Install dockerupdate
   ansible.builtin.command:
     chdir: "/home/{{ lookup('env', 'USERNAME') }}/dockerupdate/"
-    cmd: "python3 install.py"
-    creates: /usr/local/bin/dockerupdate
+    cmd: "python3 install.py"    
   register: output
+  changed_when: output.rc == 0
   failed_when: output.rc != 0
 
 - name: Remove workdir
@@ -35,8 +35,14 @@
     path: "/home/{{ lookup('env', 'USERNAME') }}/dockerupdate"
     state: absent 
 
+- name: Remove tarball
+  ansible.builtin.file:
+    path: "/home/{{ lookup('env', 'USERNAME') }}/dockerupdate.tar.gz"
+    state: absent 
+
 - name: Make $HOME/docker dir
   ansible.builtin.file:
     path: "/home/{{ lookup('env', 'USERNAME') }}/docker"
     state: directory
     mode: 0755
+  become: false
