@@ -2,11 +2,11 @@
   ansible.builtin.uri:
     url: https://api.github.com/repos/lupinelab/dockerupdate/releases/latest
     return_content: true                                             
-  register: json_reponse
+  register: latest_release
 
 - name: Download dockerupdate
   ansible.builtin.get_url:
-    url: "{{ json_reponse.json.assets[0].browser_download_url }}"
+    url: "{{ latest_release.json.assets[0].browser_download_url }}"
     dest: "/home/{{ lookup('env', 'USERNAME') }}/dockerupdate.tar.gz"
     mode: 0700
 
