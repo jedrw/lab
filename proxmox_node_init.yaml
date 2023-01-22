@@ -7,21 +7,25 @@
     register: output
     changed_when: output.rc == 0
     ignore_errors: true
+  
   - name: Add terraform user
     ansible.builtin.command: pveum user add terraform@pam
     register: output
     changed_when: output.rc == 0
     ignore_errors: true
+  
   - name: Assign role to user
     ansible.builtin.command: pveum aclmod / -user terraform@pam -role terraform
     register: output
     changed_when: output.rc == 0
     ignore_errors: true
+  
   - name: Create token for user
     ansible.builtin.command: pveum user token add terraform@pam terraform --privsep=0
     register: output
     changed_when: output.rc == 0
     ignore_errors: true
+  
   - name: Print token
     ansible.builtin.debug:
       msg: "{{ output }}"
