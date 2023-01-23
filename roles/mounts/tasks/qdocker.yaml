@@ -26,3 +26,12 @@
     opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
     state: mounted
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+
+- name: Mount downloads share
+  ansible.posix.mount:
+    src: //qshare.lupinelab/data/Downloads
+    path: /media/Downloads
+    fstype: cifs
+    opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
+    state: mounted
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
