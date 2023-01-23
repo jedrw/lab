@@ -32,12 +32,16 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-myhostname = {{ ansible_hostname }}.{{ lookup('env', 'DNS_SUFFIX') }}
+{% if lookup('env', 'DOPPLER_ENVIRONMENT') == 'test' %}
+myhostname = {{ ansible_hostname }}.lupinetest
+{% else %}
+myhostname = {{ ansible_hostname }}.lupinelab
+{% endif %}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 #myorigin = /etc/mailname
 mydestination = $myhostname, localhost.$mydomain, $mydomain
-{% if lookup('env', 'DNS_SUFFIX') == 'lupinetest' %}
+{% if lookup('env', 'DOPPLER_ENVIRONMENT') == 'test' %}
 relayhost = qmail.lupinetest
 {% else %}
 relayhost = qmail.lupinelab.co.uk
