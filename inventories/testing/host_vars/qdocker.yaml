@@ -1,0 +1,12 @@
+containers:
+  - davos
+  - grafana
+  - influxdb
+  # - jenkins
+  # - organizr
+  # - portainer
+  # - proxmox_wol
+  # - tautulli
+  # - telegraf
+  # - vmupdown
+  # - webhook_listener

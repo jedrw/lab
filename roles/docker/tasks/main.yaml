@@ -33,3 +33,12 @@
 - name: Install dockerupdate
   ansible.builtin.include_tasks:
     file: "dockerupdate.yaml" 
+  
+- name: Deploy containers
+  ansible.builtin.include_tasks:
+    file: "containers.yaml"
+  when: >
+    inventory_hostname == "qdocker"
+    
+  # lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+  # and inventory_hostname == "qdocker"

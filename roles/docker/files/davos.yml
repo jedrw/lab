@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+    davos:
+        container_name: davos
+        environment:
+            - PUID=1000
+            - PGID=1000
+        ports:
+            - '9090:8080'
+        volumes:
+            - '/$HOME/docker/davos/config:/config'
+            - '/media/Downloads:/Downloads'
+        restart: unless-stopped
+        image: linuxserver/davos
