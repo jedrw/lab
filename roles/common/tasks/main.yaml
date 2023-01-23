@@ -11,4 +11,4 @@
 - name: Postfix
   ansible.builtin.import_tasks:
     file: postfix.yaml
-  when: ansible_hostname != "qmail"
+  when: inventory_hostname != "qmail"
