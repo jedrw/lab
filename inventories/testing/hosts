@@ -1,7 +1,7 @@
 all:
   hosts:
   children: 
-    proxmox-nodes:
+    proxmox_nodes:
       hosts:
         testprox:
           ansible_host: 192.168.30.101

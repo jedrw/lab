@@ -1,5 +1,5 @@
 - name: Initialise proxmox node
-  hosts: proxmox-nodes
+  hosts: proxmox_nodes
   become: false
   tasks:
   - name: Add terraform role 
