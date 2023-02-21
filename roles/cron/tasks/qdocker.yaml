@@ -4,7 +4,7 @@
     minute: '0'
     hour: '13'
     weekday: '1'
-    user: "{{ lookup('env', 'USERNAME')  }}"
+    user: "{{ lookup('env', 'USERNAME') }}"
     job: '/usr/local/bin/dockerupdate -ia && docker system prune -f --volumes'
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
 
@@ -14,6 +14,6 @@
     minute: '0'
     hour: '10'
     weekday: '1'
-    user: "{{ lookup('env', 'USERNAME')  }}"
+    user: "{{ lookup('env', 'USERNAME') }}"
     job: 'rsync -av /home/jedrw/docker --exclude=influxdb /mnt/Backup/configs/docker --delete'
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'

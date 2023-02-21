@@ -1,3 +1,8 @@
+- name: Install cifs_utils
+  ansible.builtin.package:
+    name: cifs-utils
+    state: present
+
 - name: Mount docker disks
   ansible.posix.mount:
     src: "UUID={{ item.uuid }}"
@@ -20,9 +25,9 @@
 
 - name: Mount backup share
   ansible.posix.mount:
-    src: //qshare.lupinelab/data/Backup 
-    path: /mnt/Backup 
-    fstype: cifs 
+    src: //qshare.lupinelab/data/Backup
+    path: /mnt/Backup
+    fstype: cifs
     opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
     state: mounted
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'

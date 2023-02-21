@@ -1,6 +1,6 @@
 - name: Install unattended-upgrades
   ansible.builtin.package:
-    name: unattended-upgrades 
+    name: unattended-upgrades
     state: latest
 
 - name: Configure auto-upgrades

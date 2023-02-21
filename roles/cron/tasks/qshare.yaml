@@ -6,12 +6,13 @@
     user: root
     job: 'rsync -av --del /lupinedata/ -e "ssh -i /home/jedrw/.ssh/id_rsa" jedrw@qkourum.lupinedmz:/lupinebackup/lupinedata/'
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+
 - name: Add gdrive backup cron
   ansible.builtin.cron:
     name: gdrive backup
     minute: '0'
     hour: '1'
     day: '1'
-    user: "{{ lookup('env', 'USERNAME')  }}"
+    user: "{{ lookup('env', 'USERNAME') }}"
     job: 'rclone sync -v /lupinedata/data gdrive:lupinelabbackup/data --exclude=Downloads/** --exclude=.Trash-1000/** --create-empty-src-dirs --delete-before'
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'

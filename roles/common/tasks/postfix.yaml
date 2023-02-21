@@ -1,6 +1,6 @@
 - name: Install postfix and mailutils
   ansible.builtin.package:
-    name: 
+    name:
       - postfix
       - mailutils
     state: latest

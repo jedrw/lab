@@ -1,5 +1,5 @@
 - name: Newaliases
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: newaliases
   register: output
   changed_when: output.rc == 0

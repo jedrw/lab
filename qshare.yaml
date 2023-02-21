@@ -1,4 +1,5 @@
-- hosts: qshare
+- name: Build/Configure qshare
+  hosts: qshare
   become: true
   vars_files:
     - roles/rclone/vars/main.yaml

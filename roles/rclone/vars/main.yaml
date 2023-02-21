@@ -8,5 +8,5 @@ rclone_configs:
       root_folder_id: "{{ lookup('env', 'GDRIVE_ROOT_FOLDER_ID') }}"
 
 rclone_config_owner:
-   OWNER: "{{ lookup('env', 'USERNAME') }}"
-   GROUP: "{{ lookup('env', 'USERNAME') }}"
+  OWNER: "{{ lookup('env', 'USERNAME') }}"
+  GROUP: "{{ lookup('env', 'USERNAME') }}"

@@ -2,7 +2,7 @@
   ansible.builtin.package:
     name: samba
     state: present
-  
+
 - name: Configure smbd
   ansible.builtin.copy:
     src: smb.conf

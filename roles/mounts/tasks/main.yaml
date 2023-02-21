@@ -1,8 +1,3 @@
-- name: Install cifs_utils
-  ansible.builtin.package:
-    name: cifs-utils
-    state: present
-
 - name: Import mount list for hosts
   ansible.builtin.include_tasks:
-    file: "{{ ansible_hostname | lower }}.yaml" 
+    file: "{{ ansible_hostname | lower }}.yaml"
