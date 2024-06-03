@@ -1,0 +1,8 @@
+- name: Enable vfio modules
+  ansible.builtin.copy:
+    src: vfio.conf
+    dest: /etc/modules-load.d/vfio.conf
+    mode: "0644"
+  notify:
+    - Update initramfs
+    - Reboot

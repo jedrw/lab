@@ -1,0 +1,33 @@
+- name: Configure Proxmox Nodes
+  hosts: proxmox_nodes
+  gather_facts: true
+  become: true
+  pre_tasks:
+    - name: Add no-subscription pve repository
+      ansible.builtin.apt_repository:
+        repo: deb http://download.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-no-subscription
+        state: present
+        filename: pve
+        update_cache: false
+    - name: Remove enterprise pve repository
+      ansible.builtin.apt_repository:
+        repo: deb https://enterprise.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-enterprise
+        state: absent
+        filename: pve-enterprise
+        update_cache: false
+    - name: Add no-subscription ceph repository
+      ansible.builtin.apt_repository:
+        repo: deb http://download.proxmox.com/debian/ceph-reef {{ ansible_distribution_release }} no-subscription
+        state: present
+        filename: ceph
+        update_cache: false
+    - name: Remove enterprise ceph repository
+      ansible.builtin.apt_repository:
+        repo: deb https://enterprise.proxmox.com/debian/ceph-quincy {{ ansible_distribution_release }} enterprise
+        state: absent
+        filename: ceph
+
+  roles:
+    - common
+    - smartd
+    - pcie_passthrough

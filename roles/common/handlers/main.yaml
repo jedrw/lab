@@ -4,11 +4,6 @@
   register: output
   changed_when: output.rc == 0
 
-- name: Restart unattended-upgrades
-  ansible.builtin.service:
-    name: unattended-upgrades
-    state: restarted
-
 - name: Postfix reload
   ansible.builtin.service:
     name: postfix

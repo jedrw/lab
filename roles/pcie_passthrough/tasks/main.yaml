@@ -1,0 +1,7 @@
+- name: Enable iommu
+  ansible.builtin.include_tasks:
+    file: "iommu.yaml"
+
+- name: Enable vfio
+  ansible.builtin.include_tasks:
+    file: "vfio.yaml"

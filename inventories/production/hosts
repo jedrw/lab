@@ -3,13 +3,18 @@ all:
   children: 
     proxmox_nodes:
       hosts:
-        qtiny-01:
-          ansible_host: 192.168.20.101
-        qtiny-02:
-          ansible_host: 192.168.20.102
+        tc-01:
+          ansible_host: 192.168.20.31
+        tc-02:
+          ansible_host: 192.168.20.32
+        tc-03:
+          ansible_host: 192.168.20.33
       vars:
         ansible_user: root
         ansible_become: false
+        disk_devices:
+          - nvme0
+          - nvme1
     vms:
       hosts:
         qmail:

@@ -1,6 +1,5 @@
 # See /usr/share/postfix/main.cf.dist for a commented, more complete version
 
-
 # Debian specific:  Specifying a file name will cause the first
 # line of that file to be used as the name.  The Debian default
 # is /etc/mailname.
@@ -29,7 +28,6 @@ smtpd_use_tls=yes
 smtp_tls_CApath=/etc/ssl/certs
 smtp_use_tls=yes
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
-
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 {% if lookup('env', 'DOPPLER_ENVIRONMENT') == 'test' %}

@@ -1,0 +1,6 @@
+- name: Configure smartd
+  ansible.builtin.lineinfile:
+    path: /etc/smartd.conf
+    line: "/dev/{{ item }} -H -m root -s L/../../7/01"
+  loop: "{{ disk_devices }}"
+  notify: Restart smartd
