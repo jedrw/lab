@@ -1,0 +1,6 @@
+[Match]
+Path=pci-{{ item.0 }}
+Driver=thunderbolt-net
+[Link]
+MACAddressPolicy=none
+Name={{ item.1 }}

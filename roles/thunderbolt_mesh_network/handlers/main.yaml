@@ -1,8 +1,10 @@
-- name: Update grub
-  ansible.builtin.command: update-grub
-
 - name: Update initramfs
   ansible.builtin.command: update-initramfs -u -k all
+
+- name: Restart FRR
+  ansible.builtin.service:
+    name: frr
+    state: restarted
 
 - name: Reboot
   ansible.builtin.reboot:

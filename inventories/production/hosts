@@ -15,6 +15,12 @@ all:
         disk_devices:
           - nvme0
           - nvme1
+        thunderbolt_devices:
+          - 0000:e7:00.5
+          - 0000:e7:00.6
+        thunderbolt_interfaces:
+          - en05
+          - en06
     vms:
       hosts:
         qmail:

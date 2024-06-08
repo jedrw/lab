@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Check if the interface is either en05 or en06
+if [ "$IFACE" = "{{ thunderbolt_interfaces[0] }}" ] || [ "$IFACE" = "{{ thunderbolt_interfaces[1] }}" ]; then
+    # Restart the frr service
+    /usr/bin/systemctl restart frr.service
+fi

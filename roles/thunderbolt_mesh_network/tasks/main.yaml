@@ -1,0 +1,78 @@
+- name: Enable thunderbolt-net module
+  ansible.builtin.copy:
+    src: thunderbolt-net.conf
+    dest: /etc/modules-load.d/thunderbolt-net.conf
+    mode: "0644"
+  notify:
+    - Update initramfs
+    - Reboot
+
+- name: Fix thunderbolt network interface names
+  ansible.builtin.template:
+    src: 00-thunderboltX.link.j2
+    dest: "/etc/systemd/network/00-thunderbolt{{ ansible_loop.index0 }}.link"
+    mode: "0664"
+  loop: "{{ thunderbolt_devices | zip(thunderbolt_interfaces) | list }}"
+  loop_control:
+    extended: true
+  notify:
+    - Reboot
+
+- name: Setup interfaces
+  ansible.builtin.blockinfile:
+    block: |
+      auto lo:0
+      iface lo:0 inet static
+        address 10.0.20.{{ ansible_host.split(".")[-1] }}/32
+    path: /etc/network/interfaces
+    insertafter: "iface lo inet loopback"
+
+- name: Add interfaces
+  ansible.builtin.template:
+    src: thunderbolt-interfaces.j2
+    dest: /etc/network/interfaces.d/thunderbolt-interfaces
+    mode: "0644"
+
+- name: Create ifup scripts
+  ansible.builtin.template:
+    src: en0Xup.sh.j2
+    dest: /usr/local/bin/{{ item }}up.sh
+    mode: u+x
+  loop: "{{ thunderbolt_interfaces }}"
+
+- name: Create thunderbolt interface udev rules
+  ansible.builtin.template:
+    src: 10-tb-en.rules.j2
+    dest: /etc/udev/rules.d/10-tb-en.rules
+    mode: "0644"
+
+- name: Enable IPv4 forwarding
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    insertafter: "^#net.ipv4.ip_forward=1"
+    line: net.ipv4.ip_forward=1
+
+- name: Install FRR
+  ansible.builtin.package:
+    name: frr
+    state: present
+
+- name: Enable fabric daemon
+  ansible.builtin.lineinfile:
+    path: /etc/frr/daemons
+    regexp: "^fabricd="
+    line: fabricd=yes
+  notify: Restart FRR
+
+- name: Configure FRR
+  ansible.builtin.template:
+    src: frr.conf.j2
+    dest: /etc/frr/frr.conf
+    mode: "0640"
+  notify: Restart FRR
+
+- name: Configure post-up FRR restart
+  ansible.builtin.template:
+    src: restart-frr.j2
+    dest: /etc/network/if-up.d/restart-frr
+    mode: u+x

@@ -1,0 +1,2 @@
+ACTION=="move", SUBSYSTEM=="net", KERNEL=="{{ thunderbolt_interfaces[0] }}", RUN+="/usr/local/bin/{{ thunderbolt_interfaces[0] }}up.sh"
+ACTION=="move", SUBSYSTEM=="net", KERNEL=="{{ thunderbolt_interfaces[1] }}", RUN+="/usr/local/bin/{{ thunderbolt_interfaces[1] }}up.sh"
