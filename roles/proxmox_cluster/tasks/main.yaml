@@ -1,0 +1,27 @@
+- name: Is cluster?
+  ansible.builtin.stat:
+    path: /etc/pve/corosync.conf
+  register: is_cluster
+
+- name: Create cluster
+  ansible.builtin.command:
+    cmd: pvecm create tiny
+  register: created_cluster
+  changed_when: created_cluster.rc == 0
+  when: inventory_hostname == "tc-01" and not is_cluster.stat.exists
+
+- name: Join nodes to cluster
+  ansible.builtin.expect:
+    command: "pvecm add {{ hostvars['tc-01']['ansible_facts']['default_ipv4']['address'] }}"
+    responses:
+      "^Please enter superuser": "{{ lookup('env', 'ROOT_PASSWORD') }}"
+      "Are you sure you want to continue connecting": "yes"
+  no_log: true
+  register: joined_cluster
+  changed_when: joined_cluster.rc == 0
+  when: inventory_hostname != "tc-01" and not is_cluster.stat.exists
+
+- name: Set migration network
+  ansible.builtin.lineinfile:
+    path: /etc/pve/datacenter.cfg
+    line: "migration: insecure,network=10.0.20.0/26"

@@ -26,8 +26,9 @@
         repo: deb https://enterprise.proxmox.com/debian/ceph-quincy {{ ansible_distribution_release }} enterprise
         state: absent
         filename: ceph
-
   roles:
     - common
     - smartd
     - pcie_passthrough
+    - thunderbolt_mesh_network
+    - proxmox_cluster
