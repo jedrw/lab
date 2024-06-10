@@ -1,0 +1,108 @@
+- name: Install ceph
+  ansible.builtin.package:
+    name: ceph
+    state: present
+
+- name: Ceph initialised?
+  ansible.builtin.stat:
+    path: /etc/pve/ceph.conf
+  register: ceph_initialised
+
+- name: Initialise ceph
+  ansible.builtin.command:
+    cmd: pveceph init --network 10.0.20.31/26
+  register: initialised
+  changed_when: initialised.rc == 0
+  when: not ceph_initialised.stat.exists and inventory_hostname == "tc-01"
+
+- name: Monitor exists?
+  ansible.builtin.lineinfile:
+    path: /etc/pve/ceph.conf
+    line: "[mon.{{ inventory_hostname }}]"
+  check_mode: true
+  register: mon_exists
+
+- name: Create ceph monitors
+  ansible.builtin.shell:
+    cmd: sleep 5 && pveceph mon create
+  register: mon_create
+  changed_when: mon_create.rc == 0
+  when: mon_exists is changed
+
+- name: Manager exists?
+  ansible.builtin.stat:
+    path: /etc/systemd/system/ceph-mgr.target.wants/ceph-mgr@{{ inventory_hostname }}.service
+  register: mgr_exists
+
+- name: Create ceph managers
+  ansible.builtin.shell:
+    cmd: sleep 5 && pveceph mgr create
+  register: mgr_create
+  changed_when: mgr_create.rc == 0
+  when: not mgr_exists.stat.exists
+
+- name: OSD exists?
+  ansible.builtin.command:
+    cmd: pveceph osd details {{ inventory_hostname[-1] | int * (ceph_osd_per_disk | int) - 1 }}
+  register: osd_exists
+  failed_when: false
+  changed_when: false
+
+- name: Create ceph OSDs
+  ansible.builtin.command:
+    cmd: pveceph osd create /dev/nvme1n1 --crush-device-class nvme --osds-per-device {{ ceph_osd_per_disk }}
+  register: osd_create
+  changed_when: osd_create.rc == 0
+  when: osd_exists.rc != 0
+  throttle: 1
+
+- name: MDS exists?
+  ansible.builtin.lineinfile:
+    path: /etc/pve/ceph.conf
+    line: "[mds.{{ inventory_hostname }}]"
+  check_mode: true
+  register: mds_exists
+
+- name: Create ceph metadata servers
+  ansible.builtin.command:
+    cmd: pveceph mds create --hotstandby {{ 0 if inventory_hostname == "tc-01" else 1 }}
+  register: mds_create
+  changed_when: mds_create.rc == 0
+  when: mds_exists is changed
+  throttle: 1
+
+- name: Pools exist?
+  ansible.builtin.command:
+    cmd: pveceph pool get {{ item }}
+  register: pools_exist
+  failed_when: false
+  changed_when: false
+  loop: "{{ ceph_pools }}"
+
+- name: Create ceph pools
+  ansible.builtin.command:
+    cmd: pveceph pool create {{ item }} --pg_autoscale_mode on --add-storages
+  register: pool_create
+  changed_when: pool_create.rc == 0
+  when: inventory_hostname == "tc-01" and pools_exist.results[ansible_loop.index0].rc != 0
+  loop: "{{ ceph_pools }}"
+  loop_control:
+    extended: true
+
+- name: Filesystems exist?
+  ansible.builtin.command:
+    cmd: ceph fs get {{ item }}
+  register: filesystems_exist
+  failed_when: false
+  changed_when: false
+  loop: "{{ ceph_filesystems }}"
+
+- name: Create cephfs filesystems
+  ansible.builtin.command:
+    cmd: pveceph fs create --name {{ item }} --pg_num 32 --add-storage 1
+  register: fs_create
+  changed_when: fs_create.rc == 0
+  when: inventory_hostname == "tc-01" and filesystems_exist.results[ansible_loop.index0].rc != 0
+  loop: "{{ ceph_filesystems }}"
+  loop_control:
+    extended: true

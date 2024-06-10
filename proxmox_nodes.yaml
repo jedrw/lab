@@ -32,3 +32,4 @@
     - pcie_passthrough
     - thunderbolt_mesh_network
     - proxmox_cluster
+    - ceph

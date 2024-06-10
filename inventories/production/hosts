@@ -21,6 +21,11 @@ all:
         thunderbolt_interfaces:
           - en05
           - en06
+        ceph_osd_per_disk: 2
+        ceph_pools:
+          - default
+        ceph_filesystems:
+          - storage
     vms:
       hosts:
         qmail:
