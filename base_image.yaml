@@ -1,0 +1,15 @@
+- name: Provision base image
+  hosts: default
+  become: true
+  pre_tasks:
+    - name: Install qemu-guest-agent
+      ansible.builtin.package:
+        name: qemu-guest-agent
+        state: latest
+    - name: Enable qemu-guest-agent
+      ansible.builtin.service:
+        name: qemu-guest-agent
+        state: started
+        enabled: true
+  roles:
+    - common
