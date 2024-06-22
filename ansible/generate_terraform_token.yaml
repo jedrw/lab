@@ -3,7 +3,7 @@
   become: false
   tasks:
   - name: Add terraform role 
-    ansible.builtin.command: pveum role add terraform -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Config.Cloudinit VM.Monitor SDN.Use"
+    ansible.builtin.command: pveum role add terraform -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Sys.Modify Sys.Audit Sys.Console VM.Config.Options VM.Allocate VM.Audit VM.Clone VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Config.Cloudinit VM.Monitor VM.Migrate SDN.Use"
     register: output
     changed_when: output.rc == 0
     ignore_errors: true

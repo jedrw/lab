@@ -21,11 +21,11 @@
     dest: "/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials"
     owner: root
     group: root
-    mode: 0640
+    mode: "0640"
 
 - name: Mount backup share
   ansible.posix.mount:
-    src: //qshare.lupinelab/data/Backup
+    src: //tshare.lupinelab/data/Backup
     path: /mnt/Backup
     fstype: cifs
     opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
@@ -34,7 +34,7 @@
 
 - name: Mount downloads share
   ansible.posix.mount:
-    src: //qshare.lupinelab/data/Downloads
+    src: //tshare.lupinelab/data/Downloads
     path: /media/Downloads
     fstype: cifs
     opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount

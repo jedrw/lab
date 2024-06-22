@@ -1,0 +1,14 @@
+- name: Build/Configure tshare
+  hosts: tshare
+  gather_facts: true
+  become: true
+  vars_files:
+    - roles/rclone/vars/main.yaml
+  roles:
+    - hostname
+    - disks
+    - mounts
+    - smbd
+    - nfs
+    # - stefangweichinger.ansible_rclone
+    # - cron

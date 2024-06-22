@@ -1,10 +1,9 @@
-- name: Build/Configure qshare
-  hosts: qshare
+- name: Build/Configure tshare
+  hosts: tshare
   become: true
   vars_files:
     - roles/rclone/vars/main.yaml
   roles:
-    - common
     - mounts
     - smbd
     - nfs

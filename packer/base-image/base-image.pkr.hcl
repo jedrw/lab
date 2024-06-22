@@ -13,37 +13,40 @@ packer {
 }
 
 variable "username" {
-    type = string
-    default = env("PROXMOX_USERNAME")
+  type    = string
+  default = env("PROXMOX_USERNAME")
 }
 
 variable "token" {
-    type = string
-    default = env("PROXMOX_TOKEN")
+  type    = string
+  default = env("PROXMOX_TOKEN")
 }
 
 source "proxmox-iso" "base-image" {
-  node          = "tc-01"
+  node                     = "tc-01"
   insecure_skip_tls_verify = true
-  proxmox_url   = "https://192.168.20.31:8006/api2/json"
-  username      = "${var.username}"
-  token         = "${var.token}"
+  proxmox_url              = "https://192.168.20.31:8006/api2/json"
+  username                 = "${var.username}"
+  token                    = "${var.token}"
 
-  http_directory = "${path.root}/http"  
-  http_port_min = 8000 # Ensure this port is open between VLANs
-  http_port_max = 8000
-  ssh_username = "jedrw"
+  http_directory       = "${path.root}/http"
+  http_port_min        = 8000 # Ensure this port is open between VLANs
+  http_port_max        = 8000
+  ssh_username         = "jedrw"
   ssh_private_key_file = "~/.ssh/id_rsa"
-  boot_wait                = "5s"
-  boot_command = ["<wait>e<wait><down><down><down><end> autoinstall ds=nocloud-net\\;s=http://{{.HTTPIP}}:{{.HTTPPort}}/<wait><f10><wait>"]
-  unmount_iso   = true
+  boot_wait            = "5s"
+  boot_command         = ["<wait>e<wait><down><down><down><end> autoinstall ds=nocloud-net\\;s=http://{{.HTTPIP}}:{{.HTTPPort}}/<wait><f10><wait>"]
+  unmount_iso          = true
 
-  vm_id         = 8888  
+  vm_id         = 8888
   template_name = "base-image"
-  iso_file                 = "storage:iso/ubuntu-24.04-live-server-amd64.iso"
-  cores = 2
-  memory = 2048
-  qemu_agent               = true
+  iso_file      = "storage:iso/ubuntu-24.04-live-server-amd64.iso"
+  cores         = 2
+  cpu_type      = "host"
+  memory        = 2048
+  bios          = "ovmf"
+  qemu_agent    = true
+  scsi_controller = "virtio-scsi-single"
   disks {
     disk_size    = "20G"
     storage_pool = "vms"
@@ -57,9 +60,6 @@ source "proxmox-iso" "base-image" {
     bridge = "vmbr0"
     model  = "virtio"
   }
-
-  cloud_init = true
-  cloud_init_storage_pool = "vms"
 }
 
 build {

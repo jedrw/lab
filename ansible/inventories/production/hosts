@@ -30,7 +30,7 @@ all:
       hosts:
         qmail:
           ansible_host: 192.168.20.10
-        qshare:
+        tshare:
           ansible_host: 192.168.20.4
         qdocker:
           ansible_host: 192.168.20.7
