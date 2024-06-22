@@ -26,8 +26,14 @@
         repo: deb https://enterprise.proxmox.com/debian/ceph-quincy {{ ansible_distribution_release }} enterprise
         state: absent
         filename: ceph
+    - name: Install common packages
+      ansible.builtin.package:
+        name:
+          - iperf3
+        state: present
   roles:
     - common
+    - postfix_relay
     - smartd
     - pcie_passthrough
     - thunderbolt_mesh_network

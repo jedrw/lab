@@ -1,9 +1,12 @@
 - name: Install common packages
   ansible.builtin.package:
     name:
+      - curl
       - inetutils-traceroute
-      - iperf3
+      - jq
+      - nano
       - pip
+      - telnet
     state: present
 
 - name: Install pexpect
@@ -12,8 +15,3 @@
       - pexpect
     break_system_packages: true
     state: present
-
-- name: Postfix
-  ansible.builtin.import_tasks:
-    file: postfix.yaml
-  when: inventory_hostname != "qmail"

@@ -8,9 +8,13 @@
 # /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
 # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
 #
-/lupinedata/k3s/gitea     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
-                          192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
-                          192.168.200.113(rw,sync,no_root_squash,no_subtree_check)
+/lupinedata/k3s/ntexpenses     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
+                               192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
+                               192.168.200.113(rw,sync,no_root_squash,no_subtree_check)
+
+/lupinedata/k3s/ombi     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
+                         192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
+                         192.168.200.113(rw,sync,no_root_squash,no_subtree_check)                               
 
 /lupinedata/k3s/portainer     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
                               192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
@@ -19,15 +23,3 @@
 /lupinedata/k3s/registry     192.168.200.111(rw,sync,no_root_squash,subtree_check) \
                              192.168.200.112(rw,sync,no_root_squash,subtree_check) \
                              192.168.200.113(rw,sync,no_root_squash,subtree_check)
-
-/lupinedata/k3s/ntexpenses     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
-                               192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
-                               192.168.200.113(rw,sync,no_root_squash,no_subtree_check)
-
-/lupinedata/k3s/greenleaf.repair     192.168.200.111(rw,sync,no_root_squash,subtree_check) \
-                                     192.168.200.112(rw,sync,no_root_squash,subtree_check) \
-                                     192.168.200.113(rw,sync,no_root_squash,subtree_check)
-
-/lupinedata/k3s/ombi     192.168.200.111(rw,sync,no_root_squash,no_subtree_check) \
-                         192.168.200.112(rw,sync,no_root_squash,no_subtree_check) \
-                         192.168.200.113(rw,sync,no_root_squash,no_subtree_check)
