@@ -3,26 +3,36 @@
     name: nfs-kernel-server
     state: latest
 
+- name: Enable nfs server
+  ansible.builtin.service:
+    name: nfs-server
+    state: started
+
 - name: Create nfs shares
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "/tcdata/nfs/{{ item }}"
     state: directory
     owner: "{{ lookup('env', 'USERNAME') }}"
     group: "{{ lookup('env', 'USERNAME') }}"
     mode: "0775"
-  loop:
-    - /lupinedata/k3s/ntexpenses
-    - /lupinedata/k3s/ombi
-    - /lupinedata/k3s/portainer
-    - /lupinedata/k3s/registry
+  loop: "{{ nfs_shares }}"
+
+- name: Make exports.d directory
+  ansible.builtin.file:
+    name: /etc/exports.d/
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
 
 - name: Configure nfs exportfs
-  ansible.builtin.copy:
-    src: exports
-    dest: /etc/exports
+  ansible.builtin.template:
+    src: nfs.exports.j2
+    dest: "/etc/exports.d/{{ item }}.exports"
     owner: root
     group: root
     mode: '0644'
+  loop: "{{ nfs_shares }}"
   notify:
     - Restart nfs-server
     - Export nfs shares

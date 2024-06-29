@@ -1,7 +1,6 @@
 - name: Configure Proxmox Nodes
   hosts: proxmox_nodes
   gather_facts: true
-  become: true
   pre_tasks:
     - name: Add no-subscription pve repository
       ansible.builtin.apt_repository:

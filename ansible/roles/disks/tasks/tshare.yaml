@@ -1,0 +1,13 @@
+- name: Create a new partition
+  community.general.parted:
+    device: "/dev/{{ item.device }}"
+    number: 1
+    state: present
+    fs_type: ext4
+  loop: "{{ additional_disks }}"
+
+- name: Create filesystems
+  community.general.filesystem:
+    dev: "/dev/{{ item.device }}1"
+    type: ext4
+  loop: "{{ additional_disks }}"

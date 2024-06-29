@@ -1,0 +1,17 @@
+- name: Get partition UUID
+  ansible.builtin.command:
+    cmd: lsblk /dev/{{ item.device }}1 -no UUID
+  loop: "{{ additional_disks }}"
+  register: uuid
+  changed_when: false
+
+- name: Mount filesystem
+  ansible.posix.mount:
+    src: "UUID={{ uuid.results[ansible_loop.index0].stdout }}"
+    path: "{{ item.mountpoint }}"
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  loop: "{{ additional_disks }}"
+  loop_control:
+    extended: true

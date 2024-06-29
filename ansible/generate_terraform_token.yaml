@@ -2,30 +2,31 @@
   hosts: tc-01
   become: false
   tasks:
-  - name: Add terraform role 
-    ansible.builtin.command: pveum role add terraform -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Sys.Modify Sys.Audit Sys.Console VM.Config.Options VM.Allocate VM.Audit VM.Clone VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Config.Cloudinit VM.Monitor VM.Migrate SDN.Use"
-    register: output
-    changed_when: output.rc == 0
-    ignore_errors: true
+    - name: Add terraform role
+      ansible.builtin.command:
+        cmd: pveum role add terraform -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.Allocate Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit Pool.Allocate Sys.Modify Sys.Audit Sys.Console VM.Config.Options VM.Allocate VM.Audit VM.Clone VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Config.Cloudinit VM.Monitor VM.Migrate SDN.Use"
+      register: output
+      changed_when: output.rc == 0
+      ignore_errors: true
 
-  - name: Add terraform user
-    ansible.builtin.command: pveum user add terraform@pam
-    register: output
-    changed_when: output.rc == 0
-    ignore_errors: true
+    - name: Add terraform user
+      ansible.builtin.command: pveum user add terraform@pam
+      register: output
+      changed_when: output.rc == 0
+      ignore_errors: true
 
-  - name: Assign role to user
-    ansible.builtin.command: pveum aclmod / -user terraform@pam -role terraform
-    register: output
-    changed_when: output.rc == 0
-    ignore_errors: true
+    - name: Assign role to user
+      ansible.builtin.command: pveum aclmod / -user terraform@pam -role terraform
+      register: output
+      changed_when: output.rc == 0
+      ignore_errors: true
 
-  - name: Create token for user
-    ansible.builtin.command: pveum user token add terraform@pam terraform --privsep=0
-    register: output
-    changed_when: output.rc == 0
-    ignore_errors: true
+    - name: Create token for user
+      ansible.builtin.command: pveum user token add terraform@pam terraform --privsep=0
+      register: output
+      changed_when: output.rc == 0
+      ignore_errors: true
 
-  - name: Print token
-    ansible.builtin.debug:
-      msg: "{{ output.stdout_lines }}"
+    - name: Print token
+      ansible.builtin.debug:
+        msg: "{{ output.stdout_lines }}"

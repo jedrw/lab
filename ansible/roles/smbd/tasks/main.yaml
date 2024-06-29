@@ -9,11 +9,22 @@
     dest: /etc/samba/smb.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify: Restart smbd
+
+- name: Check smb user exists
+  ansible.builtin.command:
+    cmd: sudo pdbedit -L
+  register: smbuser_exists
+  changed_when: false
+
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ smbuser_exists }}"
 
 - name: Create smb user and set password
   ansible.builtin.shell: "(echo {{ lookup('env', 'SMBPASSWD') }}; echo {{ lookup('env', 'SMBPASSWD') }}) | smbpasswd -a -s {{ lookup('env', 'USERNAME') }}"
   register: output
+  when: smbuser_exists.stdout is not match(lookup('env', 'USERNAME'))
   changed_when: output.rc == 0
   ignore_errors: true
