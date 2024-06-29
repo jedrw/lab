@@ -25,6 +25,7 @@
 - name: Create smb user and set password
   ansible.builtin.shell: "(echo {{ lookup('env', 'SMBPASSWD') }}; echo {{ lookup('env', 'SMBPASSWD') }}) | smbpasswd -a -s {{ lookup('env', 'USERNAME') }}"
   register: output
+  no_log: true
   when: smbuser_exists.stdout is not match(lookup('env', 'USERNAME'))
   changed_when: output.rc == 0
   ignore_errors: true
