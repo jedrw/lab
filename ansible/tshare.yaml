@@ -6,6 +6,7 @@
     - roles/rclone/vars/main.yaml
   roles:
     - hostname
+    - unattended_upgrades
     - disks
     - mounts
     - smbd
