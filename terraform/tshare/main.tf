@@ -49,6 +49,7 @@ resource "proxmox_vm_qemu" "tshare" {
   name         = "tshare"
   target_node  = "tc-01"
   ipconfig0    = "ip=dhcp"
+  tags         = "prod"
 
   disks {
     virtio {

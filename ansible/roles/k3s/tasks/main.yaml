@@ -1,0 +1,39 @@
+- name: Disable swap
+  ansible.builtin.command:
+    cmd: swapoff -a
+  register: swapoff
+  changed_when: false
+
+- name: Permanently disable swap
+  ansible.posix.mount:
+    src: /swap.img
+    path: none
+    state: absent_from_fstab
+
+- name: Cluster initialised?
+  ansible.builtin.stat:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: is_initialised
+  when: inventory_hostname == "k-c-01"
+
+- name: Init k3s cluster
+  ansible.builtin.shell:
+    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --cluster-init --disable servicelb --tls-san 'k3s.lupinelab.co.uk' --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
+  when: inventory_hostname == "k-c-01" and not is_initialised.stat.exists
+  register: k3s_initialised
+  no_log: true
+  changed_when: k3s_initialised.rc == 0
+
+- name: Is control-plane node
+  ansible.builtin.stat:
+    path: /etc/rancher/k3s/k3s.yaml
+  register: is_control_plane_node
+  when: inventory_hostname != "k-c-01"
+
+- name: Add control-plane node
+  ansible.builtin.shell:
+    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --server https://k-c-01:6443 --disable servicelb --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
+  when: inventory_hostname != "k-c-01" and not is_control_plane_node.stat.exists
+  register: add_control_plane
+  no_log: true
+  changed_when: add_control_plane.rc == 0

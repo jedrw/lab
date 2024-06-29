@@ -48,11 +48,11 @@ all:
         ansible_user: jedrw
     k3s:
       hosts:
-        qk3s-m-01:
-          ansible_host: 192.168.200.111
-        qk3s-m-02:
-          ansible_host: 192.168.200.112
-        qkourum:
-          ansible_host: 192.168.200.113
+        k-c-01:
+          ansible_host: 192.168.200.31
+        k-c-02:
+          ansible_host: 192.168.200.32
+        k-c-03:
+          ansible_host: 192.168.200.33
       vars:
         ansible_user: jedrw
