@@ -13,3 +13,12 @@
         enabled: true
   roles:
     - common
+  post_tasks:
+    - name: Reset machine-id
+      ansible.builtin.shell:
+        cmd: |
+          echo -n >/etc/machine-id
+          rm /var/lib/dbus/machine-id
+          ln -s /etc/machine-id /var/lib/dbus/machine-id
+      register: output
+      changed_when: output.rc == 0
