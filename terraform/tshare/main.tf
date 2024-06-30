@@ -34,7 +34,7 @@ variable "ssh_user_public_key" {
 resource "proxmox_vm_qemu" "tshare" {
   agent        = 1
   vmid         = 205
-  desc         = ""
+  desc         = "createdAt: ${timestamp()}"
   bios         = "ovmf"
   cores        = 2
   memory       = 2048
@@ -85,5 +85,9 @@ resource "proxmox_vm_qemu" "tshare" {
     queues    = 0
     rate      = 0
     tag       = -1
+  }
+
+  lifecycle {
+    ignore_changes = [ desc ]  
   }
 }
