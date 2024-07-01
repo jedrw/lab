@@ -4,4 +4,3 @@ runtime:
   options:
     packagemanager: npm
 description: A TypeScript program to deploy a Helm chart onto a Kubernetes cluster
-
