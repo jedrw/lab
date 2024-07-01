@@ -1,7 +1,7 @@
 - name: Install nfs-utils
   ansible.builtin.package:
     name: nfs-kernel-server
-    state: latest
+    state: present
 
 - name: Enable nfs server
   ansible.builtin.service:

@@ -3,7 +3,7 @@
     name:
       - postfix
       - mailutils
-    state: latest
+    state: present
 
 - name: Write config from template
   ansible.builtin.template:

@@ -3,6 +3,14 @@
     name: ceph
     state: present
 
+- name: Copy ceph-clean script
+  ansible.builtin.copy:
+    src: ceph-clean
+    dest: ./
+    mode: u+x
+  become: false
+  when: inventory_hostname == "k-c-01"
+
 - name: Ceph initialised?
   ansible.builtin.stat:
     path: /etc/pve/ceph.conf

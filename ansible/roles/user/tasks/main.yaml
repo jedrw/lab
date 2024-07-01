@@ -1,0 +1,5 @@
+- name: Set userpassword
+  ansible.builtin.user:
+    name: "{{ lookup('env', 'USERNAME') }}"
+    password: "{{ lookup('env', 'SMBPASSWD') | password_hash }}"
+  no_log: true

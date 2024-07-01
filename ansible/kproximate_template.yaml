@@ -1,4 +1,4 @@
-- name: Provision base image
+- name: Provision kproximate template
   hosts: default
   become: true
   pre_tasks:
@@ -15,10 +15,23 @@
     - common
     - user
   post_tasks:
+    - name: Permanently disable swap
+      ansible.posix.mount:
+        src: /swap.img
+        path: none
+        state: absent_from_fstab
+    - name: Install k3s required packages
+      ansible.builtin.package:
+        name:
+          - runc
+          - containerd
+          - nfs-common
+        state: present
     - name: Reset machine-id
       ansible.builtin.shell:
         cmd: |
-          echo -n >/etc/machine-id
+          rm -rf /var/lib/cloud/*
+          echo -n > /etc/machine-id
           rm /var/lib/dbus/machine-id
           ln -s /etc/machine-id /var/lib/dbus/machine-id
       register: output

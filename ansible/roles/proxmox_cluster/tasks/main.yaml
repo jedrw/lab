@@ -25,3 +25,10 @@
   ansible.builtin.lineinfile:
     path: /etc/pve/datacenter.cfg
     line: "migration: insecure,network=10.0.20.0/26"
+
+- name: Copy kproximate template creation script
+  ansible.builtin.copy:
+    src: create_kproximate_template_exec
+    dest: ./
+    mode: u+x
+  when: inventory_hostname == "tc-01"

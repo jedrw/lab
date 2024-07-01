@@ -1,7 +1,7 @@
 - name: Install unattended-upgrades
   ansible.builtin.package:
     name: unattended-upgrades
-    state: latest
+    state: present
 
 - name: Configure auto-upgrades
   ansible.builtin.copy:

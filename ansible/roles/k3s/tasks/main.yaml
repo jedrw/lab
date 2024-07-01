@@ -13,7 +13,21 @@
 - name: Install nfs-common
   ansible.builtin.package:
     name: nfs-common
-    state: latest
+    state: present
+
+- name: Ensure manifest dir exists
+  ansible.builtin.file:
+    path: /var/lib/rancher/k3s/server/manifests
+    state: directory
+    mode: u+x
+  when: inventory_hostname == "k-c-01"
+
+- name: Copy user clusterrolebinding manifest
+  ansible.builtin.copy:
+    src: jedrw-clusterrolebinding.yaml
+    dest: /var/lib/rancher/k3s/server/manifests/jedrw-clusterrolebinding.yaml
+    mode: "0600"
+  when: inventory_hostname == "k-c-01"
 
 - name: Cluster initialised?
   ansible.builtin.stat:
@@ -23,7 +37,7 @@
 
 - name: Init k3s cluster
   ansible.builtin.shell:
-    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --cluster-init --disable servicelb --tls-san 'k3s.lupinelab.co.uk' --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
+    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --cluster-init --disable servicelb --tls-san 'tk3s.lupinelab.co.uk' --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
   when: inventory_hostname == "k-c-01" and not is_initialised.stat.exists
   register: k3s_initialised
   no_log: true
@@ -42,3 +56,11 @@
   register: add_control_plane
   no_log: true
   changed_when: add_control_plane.rc == 0
+
+- name: Copy kubeconfig create script
+  ansible.builtin.copy:
+    src: create_kubeconfig
+    dest: ./
+    mode: u+x
+  become: false
+  when: inventory_hostname == "k-c-01"

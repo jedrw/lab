@@ -18,6 +18,7 @@
 
   roles:
     - common
+    - user
     - mounts
     - docker
     - cron
