@@ -1,3 +1,7 @@
+// This currently doesn't work due to kp-nodes provisioned from this template using localhost
+// for their hostname instead of the name configured in proxmox. Current using the example script
+// from the kproximate repo. TODO :(
+
 packer {
   required_plugins {
     proxmox = {
@@ -22,7 +26,7 @@ variable "token" {
   default = env("PROXMOX_TOKEN")
 }
 
-source "proxmox-iso" "base-image" {
+source "proxmox-iso" "kproximate-template" {
   node                     = "tc-01"
   insecure_skip_tls_verify = true
   proxmox_url              = "https://192.168.20.31:8006/api2/json"
@@ -34,12 +38,14 @@ source "proxmox-iso" "base-image" {
   http_port_max        = 8000
   ssh_username         = "jedrw"
   ssh_private_key_file = "~/.ssh/id_rsa"
+  ssh_timeout          = "10m"
   boot_wait            = "5s"
   boot_command         = ["<wait>e<wait><down><down><down><end> autoinstall ds=nocloud-net\\;s=http://{{.HTTPIP}}:{{.HTTPPort}}/<wait><f10><wait>"]
   unmount_iso          = true
 
-  vm_id         = 8888
-  template_name = "base-image"
+  vm_id         = 900
+  template_name = "kproximate-template"
+  template_description = "createdAt: ${timestamp()}"
   iso_file      = "storage:iso/ubuntu-24.04-live-server-amd64.iso"
   cores         = 2
   cpu_type      = "host"
@@ -47,8 +53,10 @@ source "proxmox-iso" "base-image" {
   bios          = "ovmf"
   qemu_agent    = true
   scsi_controller = "virtio-scsi-single"
+  cloud_init    = true
+  cloud_init_storage_pool = "vms"
   disks {
-    disk_size    = "20G"
+    disk_size    = "10G"
     storage_pool = "vms"
     type         = "virtio"
   }
@@ -57,17 +65,19 @@ source "proxmox-iso" "base-image" {
     pre_enrolled_keys = true
   }
   network_adapters {
-    bridge = "vmbr0"
-    model  = "virtio"
+    bridge   = "vmbr0"
+    model    = "virtio"
+    vlan_tag = 200
+    firewall = true
   }
 }
 
 build {
   sources = [
-    "source.proxmox-iso.base-image"
+    "source.proxmox-iso.kproximate-template"
   ]
 
   provisioner "ansible" {
-    playbook_file = "../../ansible/base_image.yaml"
+    playbook_file = "../../ansible/kproximate_template.yaml"
   }
 }
