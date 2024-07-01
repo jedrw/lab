@@ -1,0 +1,7 @@
+name: k3s
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: A TypeScript program to deploy a Helm chart onto a Kubernetes cluster
+
