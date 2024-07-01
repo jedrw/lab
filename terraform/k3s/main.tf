@@ -34,11 +34,12 @@ variable "ssh_user_public_key" {
 resource "proxmox_vm_qemu" "k3s-control-plane" {
   count       = 3
   agent       = 1
-  vmid        = "200${count.index+1}"
+  vmid        = "200${count.index + 1}"
   desc        = "createdAt: ${timestamp()}"
   bios        = "ovmf"
   cores       = 2
   memory      = 1024
+  balloon     = 0
   onboot      = true
   boot        = "order=virtio0;net0"
   vm_state    = "running"
@@ -46,8 +47,8 @@ resource "proxmox_vm_qemu" "k3s-control-plane" {
   startup     = ""
   clone       = "base-image"
   full_clone  = true
-  name        = "k-c-0${count.index+1}"
-  target_node = "tc-0${count.index+1}"
+  name        = "k-c-0${count.index + 1}"
+  target_node = "tc-0${count.index + 1}"
   ipconfig0   = "ip=dhcp"
   tags        = "prod,k3s"
 
@@ -78,7 +79,7 @@ resource "proxmox_vm_qemu" "k3s-control-plane" {
   }
 
   lifecycle {
-    ignore_changes = [ desc ]  
+    ignore_changes = [desc]
   }
 }
 
