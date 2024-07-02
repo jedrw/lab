@@ -38,8 +38,8 @@ resource "proxmox_vm_qemu" "k3s-control-plane" {
   desc        = "createdAt: ${timestamp()}"
   bios        = "ovmf"
   cores       = 2
-  memory      = 1024
-  balloon     = 0
+  memory      = 2048
+  balloon     = 1024
   onboot      = true
   boot        = "order=virtio0;net0"
   vm_state    = "running"
