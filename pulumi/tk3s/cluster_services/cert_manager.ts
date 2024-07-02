@@ -1,9 +1,10 @@
+import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 
 import { k3sOpts } from "../kubernetes";
 
-export const certManager = async () => {
+export const certManager = async (dependsOn: pulumi.Resource) => {
   const secrets = await doppler.getSecrets({
     project: "cert-manager",
     config: "prod",
@@ -21,7 +22,7 @@ export const certManager = async () => {
   );
 
   const secret = new kubernetes.core.v1.Secret(
-    "cloudflare-api-token",
+    `${releaseName}-cloudflare-secret`,
     {
       metadata: {
         name: "cloudflare-api-token",
@@ -47,35 +48,12 @@ export const certManager = async () => {
         crds: {
           enabled: true,
         },
-        // TODO remove these once kproximate is up and running
-        // tolerations: [
-        //     {
-        //         key: "node-role.kubernetes.io/control-plane",
-        //         operator: "Exists",
-        //         effect: "NoSchedule",
-        //     },
-        // ],
-        // webhook: {
-        //     tolerations: [
-        //         {
-        //             key: "node-role.kubernetes.io/control-plane",
-        //             operator: "Exists",
-        //             effect: "NoSchedule",
-        //         },
-        //     ],
-        // },
-        // cainjector: {
-        //     tolerations: [
-        //         {
-        //             key: "node-role.kubernetes.io/control-plane",
-        //             operator: "Exists",
-        //             effect: "NoSchedule",
-        //         },
-        //     ],
-        // }
       },
     },
-    k3sOpts,
+    {
+      ...k3sOpts,
+      dependsOn,
+    },
   );
 
   new kubernetes.apiextensions.CustomResource(

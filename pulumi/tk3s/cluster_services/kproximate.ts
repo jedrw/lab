@@ -56,7 +56,10 @@ export const kproximate = async () => {
       path: "/",
       propagate: true,
     },
-    proxmoxOpts,
+    {
+      ...proxmoxOpts,
+      deleteBeforeReplace: true,
+    },
   );
 
   const token = new proxmox.user.Token(
@@ -77,7 +80,7 @@ export const kproximate = async () => {
     },
   );
 
-  // This relies on there being a compatible template named `kproximate-template` being
+  // This relies on there to be a compatible template named `kproximate-template`
   // present on the proxmox cluster.
   const release = new kubernetes.helm.v3.Release(
     releaseName,
