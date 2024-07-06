@@ -1,0 +1,29 @@
+- name: Make dirs
+  ansible.builtin.file:
+    path: "/var/lib/rancher/k3s/gen/{{ lookup('env', 'USERNAME') }}/{{ item }}"
+    state: "directory"
+    owner: "{{ lookup('env', 'USERNAME') }}"
+    group: "{{ lookup('env', 'USERNAME') }}"
+    mode: "0700"
+  loop:
+    - "keys"
+    - "kube"
+
+- name: Kubeconfig exists?
+  ansible.builtin.stat:
+    path: /var/lib/rancher/k3s/gen/kube/config
+  register: kubeconfig_exists
+
+- name: Run generate script
+  ansible.builtin.command:
+    cmd: "/root/create_kubeconfig"
+  when: not kubeconfig_exists.stat.exists
+  register: created_kubeconfig
+  changed_when: created_kubeconfig.rc == 0
+
+- name: Change owner of kubeconfig
+  ansible.builtin.file:
+    path: "/var/lib/rancher/k3s/gen/{{ lookup('env', 'USERNAME') }}/kube/config"
+    owner: "{{ lookup('env', 'USERNAME') }}"
+    group: "{{ lookup('env', 'USERNAME') }}"
+    mode: "0600"

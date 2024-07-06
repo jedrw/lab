@@ -60,7 +60,7 @@
 - name: Copy kubeconfig create script
   ansible.builtin.copy:
     src: create_kubeconfig
-    dest: ./
+    dest: /root/
     mode: u+x
-  become: false
+  become: true
   when: inventory_hostname == "k-c-01"

@@ -1,9 +1,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
-
 import { k3sOpts } from "../kubernetes";
 
-export const kubeVip = async (dependsOn: pulumi.Resource) => {
+export const kubeVip = async (dependsOn: pulumi.Resource[]) => {
   const releaseName = "kube-vip";
   const releaseNamespace = "kube-system";
 

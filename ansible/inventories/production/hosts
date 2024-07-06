@@ -46,13 +46,16 @@ all:
           ansible_host: 192.168.20.7
       vars:
         ansible_user: jedrw
-    k3s:
+    tk3s:
       hosts:
         k-c-01:
           ansible_host: 192.168.200.31
+          mac: C2:8E:0D:EF:A7:5B
         k-c-02:
           ansible_host: 192.168.200.32
+          mac: BA:73:6D:58:36:4B
         k-c-03:
           ansible_host: 192.168.200.33
+          mac: 2E:A1:61:F3:07:8D
       vars:
         ansible_user: jedrw

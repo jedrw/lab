@@ -1,14 +1,17 @@
-import { clusterServices as buildClusterServices } from "./cluster_services/cluster_services";
+import { buildCluster } from "./cluster/cluster";
+import { buildClusterServices } from "./cluster_services/cluster_services";
 import * as pulumiNull from "@pulumi/null";
 
 export = async () => {
-  const clusterServices = await buildClusterServices();
+  const cluster = await buildCluster();
 
-  const depender = new pulumiNull.Resource(
-    "cluster-services-depender",
-    {},
-    {
-      dependsOn: clusterServices,
-    },
-  );
+  const clusterServices = await buildClusterServices(cluster);
+
+  // const clusterServicesDepender = new pulumiNull.Resource(
+  //   "cluster-services-depender",
+  //   {},
+  //   {
+  //     dependsOn: clusterServices,
+  //   },
+  // );
 };

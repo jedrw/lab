@@ -1,10 +1,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
-
 import { k3sOpts } from "../kubernetes";
 
-export const externalDns = async (dependsOn: pulumi.Resource) => {
+export const externalDns = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
     project: "external-dns",
     config: "prod",

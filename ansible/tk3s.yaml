@@ -1,5 +1,5 @@
 - name: Build/Configure k-c-0x nodes
-  hosts: k3s
+  hosts: tk3s
   gather_facts: true
   become: true
   roles:

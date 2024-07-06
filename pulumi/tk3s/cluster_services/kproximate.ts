@@ -7,7 +7,7 @@ import * as proxmox from "@muhlba91/pulumi-proxmoxve";
 import { proxmoxOpts } from "../proxmox";
 import { k3sOpts } from "../kubernetes";
 
-export const kproximate = async () => {
+export const kproximate = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
     project: "lupinecluster_infrastructure",
     config: "prod",
@@ -36,7 +36,10 @@ export const kproximate = async () => {
       ],
       roleId: releaseName,
     },
-    proxmoxOpts,
+    {
+      ...proxmoxOpts,
+      dependsOn,
+    },
   );
 
   const user = new proxmox.permission.User(
@@ -45,7 +48,10 @@ export const kproximate = async () => {
       enabled: true,
       userId: `${releaseName}@pam`,
     },
-    proxmoxOpts,
+    {
+      ...proxmoxOpts,
+      dependsOn,
+    },
   );
 
   new proxmox.Acl(
@@ -58,6 +64,7 @@ export const kproximate = async () => {
     },
     {
       ...proxmoxOpts,
+      dependsOn,
       deleteBeforeReplace: true,
     },
   );
@@ -69,7 +76,10 @@ export const kproximate = async () => {
       userId: user.userId,
       privilegesSeparation: false,
     },
-    proxmoxOpts,
+    {
+      ...proxmoxOpts,
+      dependsOn,
+    },
   );
 
   const rabbitPassword = new random.RandomPassword(
@@ -77,6 +87,9 @@ export const kproximate = async () => {
     {
       length: 16,
       special: false,
+    },
+    {
+      dependsOn,
     },
   );
 
@@ -121,7 +134,10 @@ export const kproximate = async () => {
         replicaCount: 3,
       },
     },
-    k3sOpts,
+    {
+      ...k3sOpts,
+      dependsOn,
+    },
   );
 
   return release;

@@ -1,9 +1,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
-
 import { k3sOpts } from "../kubernetes";
 
-export const kubeVipCloudProvider = async (dependsOn: pulumi.Resource) => {
+export const kubeVipCloudProvider = async (dependsOn: pulumi.Resource[]) => {
   const releaseName = "kube-vip-cloud-provider";
   const releaseNamespace = "kube-system";
 
@@ -34,7 +33,7 @@ export const kubeVipCloudProvider = async (dependsOn: pulumi.Resource) => {
     },
     {
       ...k3sOpts,
-      dependsOn: [configmap, dependsOn],
+      dependsOn: [...dependsOn, configmap],
     },
   );
 

@@ -1,11 +1,10 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
-
 import { k3sOpts } from "../kubernetes";
 
 export const kubernetesPfsenseController = async (
-  dependsOn: pulumi.Resource,
+  dependsOn: pulumi.Resource[],
 ) => {
   const secrets = await doppler.getSecrets({
     project: "kubernetes-pfsense-controller",
@@ -36,8 +35,8 @@ export const kubernetesPfsenseController = async (
           plugins: {
             metallb: {
               enabled: true,
-              nodeLabelSelector: "node-role.kubernetes.io/control-plane=true",
               "bgp-implementation": "frr",
+              nodeLabelSelector: "node-role.kubernetes.io/control-plane=true",
               options: {
                 frr: {
                   template: {
