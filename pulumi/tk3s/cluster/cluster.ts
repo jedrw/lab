@@ -2,6 +2,7 @@ import * as yaml from "yaml";
 import * as fs from "fs";
 import * as pulumi from "@pulumi/pulumi";
 import * as command from "@pulumi/command";
+import * as doppler from "@pulumiverse/doppler";
 import * as proxmox from "@muhlba91/pulumi-proxmoxve";
 import { proxmoxOpts } from "../proxmox";
 import { buildK3sOpts } from "../kubernetes";
@@ -99,25 +100,17 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     );
   }
 
-  // Ansible uses env vars from doppler, these are the same as those
-  // required to run this process so we need to pass the curretn
-  // process.env values without any potentially undfined vars.
-  let env: { [key: string]: string } = {};
-  for (const key in process.env) {
-    if (process.env[key] !== undefined) {
-      if (key.startsWith("PULUMI_NODEJS")) {
-        continue;
-      }
-      env[key] = process.env[key] as string;
-    }
-  }
+  let env = await doppler.getSecrets({
+    project: "lupinecluster_infrastructure",
+    config: "prod",
+  });
 
   const clusterSetup = new command.local.Command(
     "tk3s-setup",
     {
       create: "ansible-playbook -i inventories/production/ tk3s.yaml",
       dir: "../../ansible/",
-      environment: env,
+      environment: env.map,
       triggers: [cluster],
     },
     { dependsOn: cluster },
@@ -128,27 +121,30 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     {
       create: "ansible-playbook -i inventories/production/ kubeconfig.yaml",
       dir: "../../ansible/",
-      environment: env,
+      environment: env.map,
       triggers: [clusterSetup],
     },
     { dependsOn: clusterSetup },
   );
 
-  buildK3sOpts(
-    new command.remote.Command(
-      `${process.env["USERNAME"]}-kubeconfig`,
-      {
-        create: "cat /var/lib/rancher/k3s/gen/jedrw/kube/config",
-        connection: {
-          host: "k-c-01.lupinedmz",
-          user: process.env["USERNAME"],
-          privateKey: fs.readFileSync("/home/jedrw/.ssh/id_rsa", "utf8"),
-        },
-        triggers: [generateKubeconfig],
+  const kubeconfig = new command.remote.Command(
+    `${process.env["USERNAME"]}-kubeconfig`,
+    {
+      create: "cat /var/lib/rancher/k3s/gen/jedrw/kube/config",
+      connection: {
+        host: "k-c-01.lupinedmz",
+        user: process.env["USERNAME"],
+        privateKey: fs.readFileSync(
+          `/home/${process.env["USERNAME"]}/.ssh/id_rsa`,
+          "utf8",
+        ),
       },
-      { dependsOn: generateKubeconfig },
-    ).stdout,
-  );
+      triggers: [generateKubeconfig],
+    },
+    { dependsOn: generateKubeconfig },
+  ).stdout;
+
+  buildK3sOpts(kubeconfig);
 
   return cluster;
 }

@@ -111,6 +111,8 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
             kpLoadHeadroom: 0.2,
             kpNodeCores: 2,
             kpNodeMemory: 2048,
+            kpNodeLabels:
+              "topology.kubernetes.io/region=tc,topology.kubernetes.io/zone={{ targetHost }}",
             kpNodeTemplateName: "kproximate-template",
             kpQemuExecJoin: true,
             maxKpNodes: 3,

@@ -23,9 +23,9 @@
   when: inventory_hostname == "k-c-01"
 
 - name: Copy user clusterrolebinding manifest
-  ansible.builtin.copy:
-    src: jedrw-clusterrolebinding.yaml
-    dest: /var/lib/rancher/k3s/server/manifests/jedrw-clusterrolebinding.yaml
+  ansible.builtin.template:
+    src: user-clusterrolebinding.yaml.j2
+    dest: "/var/lib/rancher/k3s/server/manifests/{{ lookup('env', 'USERNAME') }}-clusterrolebinding.yaml"
     mode: "0600"
   when: inventory_hostname == "k-c-01"
 
