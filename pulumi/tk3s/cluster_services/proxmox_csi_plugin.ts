@@ -65,6 +65,7 @@ export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
+  const proxmoxEndpoint = new pulumi.Config().require("proxmoxEndpoint");
   const storageClassName = new pulumi.Config().require("storageClassName");
   const release = new kubernetes.helm.v3.Release(
     releaseName,
@@ -77,7 +78,7 @@ export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
         config: {
           clusters: [
             {
-              url: "https://192.168.20.31:8006/api2/json",
+              url: proxmoxEndpoint,
               insecure: true,
               token_id: pulumi.interpolate`${user.userId}!${token.tokenName}`,
               token_secret: token.value.apply((token) => token.split("=")[1]),

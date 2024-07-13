@@ -93,6 +93,8 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
+  const proxmoxEndpoint = new pulumi.Config().require("proxmoxEndpoint");
+
   // This relies on there to be a compatible template named `kproximate-template`
   // present on the proxmox cluster.
   const release = new kubernetes.helm.v3.Release(
@@ -118,7 +120,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
             maxKpNodes: 3,
             pmDebug: false,
             pmAllowInsecure: true,
-            pmUrl: "https://192.168.20.31:8006/api2/json",
+            pmUrl: proxmoxEndpoint,
             pmUserID: pulumi.interpolate`${user.userId}!${token.tokenName}`,
           },
           secrets: {
