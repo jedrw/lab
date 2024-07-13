@@ -1,4 +1,4 @@
-name: k3s
+name: tk3s
 runtime:
   name: nodejs
   options:
