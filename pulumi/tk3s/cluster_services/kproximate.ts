@@ -126,8 +126,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
           secrets: {
             kpJoinCommand: `curl -sfL https://get.k3s.io | K3S_URL='https://k-c-01:6443' K3S_TOKEN='${secrets.map["K3S_TOKEN"]}' sh -`,
             pmToken: token.value.apply((token) => token.split("=")[1]),
-            sshKey:
-              "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCmwrnNvwh6T8JcUJfAZT+12grJoP1o7JMIgDsudsI/nEKGrie6fTZ5+bhpfN9dNunnf5xALOfs4dExzGimsNZL7dEp+0pJuSM4NZ36z6JmWwJAojyhGG2E/5hK5oY1BrmZFxYk7komlLlyE7Ypdse/F5Chqw5a5X9aOYQqdlEeMN0YyDsujJ9cnKpYOmM8wdtXNFyg7uOrfWJQVfgVJCY0K5LsOV3uH6nRNIhKOmvbCMjXf99W3xib/ByHQXmWTIsOwtR5qCJDy6aOvoSKIxiBgRYcmfgylHyPV2YLlMKPT0hij5zyRR6jpOBKpoD3w5BAwBRyGpPoIdzZAXg1NkFLEIbYgk8kyBR8IMYvGp+AI58sQK4hSbVuESE5oWOzqLr6aikPjYjdPWUooq/N2G4yd16daM2+rpTO6H7YbjDVfeI4NI5WiVb3yQ8dVQwkhcMX5MVwKGWlypo+EdajEE8Bk1bmhLDpXfDdtg3XZvwa9flQFIpA92TtkVrZn74FpIs=",
+            sshKey: secrets.map["SSH_USER_PUBLIC_KEY"],
           },
         },
         rabbitmq: {
