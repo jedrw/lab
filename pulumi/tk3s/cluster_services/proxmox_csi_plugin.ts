@@ -65,6 +65,7 @@ export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
+  const storageClassName = new pulumi.Config().require("storageClassName");
   const release = new kubernetes.helm.v3.Release(
     releaseName,
     {
@@ -86,7 +87,7 @@ export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
         },
         storageClass: [
           {
-            name: "proxmox-virtual-disk",
+            name: storageClassName,
             storage: "vms",
             reclaimPolicy: "Retain",
             allowVolumeExpansion: true,

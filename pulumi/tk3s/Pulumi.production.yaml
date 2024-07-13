@@ -1,0 +1,2 @@
+config:
+  tk3s:storageClassName: proxmox-virtual-disk
