@@ -45,6 +45,14 @@ export const kubernetesPfsenseController = async (
                 },
               },
             },
+            "pfsense-dns-services": {
+              enabled: true,
+              dnsBackends: {
+                unbound: {
+                  enabled: true,
+                },
+              },
+            },
           },
         },
       },
