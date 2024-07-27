@@ -24,14 +24,22 @@
       auto lo:0
       iface lo:0 inet static
         address 10.0.20.{{ ansible_host.split(".")[-1] }}/32
+
+      allow-hotplug {{ thunderbolt_interfaces[0] }}
+      iface {{ thunderbolt_interfaces[0] }} inet manual
+          mtu 65520
+
+      allow-hotplug {{ thunderbolt_interfaces[1] }}
+      iface {{ thunderbolt_interfaces[1] }} inet manual
+          mtu 65520
     path: /etc/network/interfaces
     insertafter: "iface lo inet loopback"
 
-- name: Add interfaces
-  ansible.builtin.template:
-    src: thunderbolt-interfaces.j2
-    dest: /etc/network/interfaces.d/thunderbolt-interfaces
-    mode: "0644"
+- name: Configure post-up FRR restart
+  ansible.builtin.lineinfile:
+    line: post-up sleep 5 && /usr/bin/systemctl restart frr.service
+    insertbefore: "^source /etc/network/interfaces.d/*"
+    path: /etc/network/interfaces
 
 - name: Create ifup scripts
   ansible.builtin.template:
@@ -70,9 +78,3 @@
     dest: /etc/frr/frr.conf
     mode: "0640"
   notify: Restart FRR
-
-- name: Configure post-up FRR restart
-  ansible.builtin.template:
-    src: restart-frr.j2
-    dest: /etc/network/if-up.d/restart-frr
-    mode: u+x
