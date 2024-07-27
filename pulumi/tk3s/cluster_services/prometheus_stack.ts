@@ -1,9 +1,15 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
+import * as doppler from "@pulumiverse/doppler";
 import * as fs from "fs";
 import { k3sOpts } from "../kubernetes";
 
 export const prometheus = async (dependsOn: pulumi.Resource[]) => {
+  const secrets = await doppler.getSecrets({
+    project: "kube-prometheus-stack",
+    config: "prod",
+  });
+
   const releaseName = "prometheus";
   const storageClassName = new pulumi.Config().require("storageClassName");
   const prometheusRelease = new kubernetes.helm.v3.Release(
@@ -41,6 +47,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           },
         },
         grafana: {
+          adminPassword: secrets.map["GRAFANA_PASSWORD"],
           persistence: {
             enabled: true,
             type: "pvc",
@@ -84,6 +91,38 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
       },
     },
     k3sOpts,
+  );
+
+  new kubernetes.core.v1.Service(
+    "exposed-grafana-service",
+    {
+      metadata: {
+        name: "prometheus-grafana-exposed",
+        namespace: releaseName,
+        annotations: {
+          "dns.pfsense.org/hostname": "grafana-tk3s.lupinelab.co.uk",
+        },
+      },
+      spec: {
+        type: "LoadBalancer",
+        ports: [
+          {
+            name: "http-web",
+            port: 80,
+            protocol: "TCP",
+            targetPort: 3000,
+          },
+        ],
+        selector: {
+          "app.kubernetes.io/instance": releaseName,
+          "app.kubernetes.io/name": "grafana",
+        },
+      },
+    },
+    {
+      ...k3sOpts,
+      dependsOn: [prometheusRelease],
+    },
   );
 
   return prometheusRelease;
