@@ -47,6 +47,13 @@ export const externalDns = async (dependsOn: pulumi.Resource[]) => {
         provider: {
           name: "cloudflare",
         },
+        sources: ["ingress"],
+        extraArgs: [
+          // With the below two flags, only ingresses with hostname annotations will get records.
+          "--ignore-ingress-rules-spec",
+          "--ignore-ingress-tls-spec",
+          "--cloudflare-proxied",
+        ],
         env: [
           {
             name: "CF_API_TOKEN",
@@ -58,6 +65,7 @@ export const externalDns = async (dependsOn: pulumi.Resource[]) => {
             },
           },
         ],
+        logFormat: "json",
       },
     },
     {
