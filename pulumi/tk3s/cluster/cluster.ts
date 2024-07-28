@@ -105,16 +105,12 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     config: "prod",
   });
 
-  const clusterSetup = new command.local.Command(
-    "tk3s-setup",
-    {
-      create: "ansible-playbook -i inventories/production/ tk3s.yaml",
-      dir: "../../ansible/",
-      environment: env.map,
-      triggers: [cluster],
-    },
-    { dependsOn: cluster },
-  );
+  const clusterSetup = new command.local.Command("tk3s-setup", {
+    create: "ansible-playbook -i inventories/production/ tk3s.yaml",
+    dir: "../../ansible/",
+    environment: env.map,
+    triggers: [cluster],
+  });
 
   const generateKubeconfig = new command.local.Command(
     `generate-${process.env["USERNAME"]}-kubeconfig`,
@@ -124,7 +120,6 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
       environment: env.map,
       triggers: [clusterSetup],
     },
-    { dependsOn: clusterSetup },
   );
 
   const kubeconfig = new command.remote.Command(
@@ -141,10 +136,9 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
       },
       triggers: [generateKubeconfig],
     },
-    { dependsOn: generateKubeconfig },
-  ).stdout;
+  );
 
-  buildK3sOpts(kubeconfig);
+  buildK3sOpts(kubeconfig.stdout);
 
   return cluster;
 }
