@@ -30,7 +30,7 @@ export const metalLb = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
-  new kubernetes.apiextensions.CustomResource(
+  const addressPool = new kubernetes.apiextensions.CustomResource(
     "metallb-address-pool",
     {
       apiVersion: "metallb.io/v1beta1",
@@ -62,6 +62,25 @@ export const metalLb = async (dependsOn: pulumi.Resource[]) => {
         myASN: 65003,
         peerASN: 65000,
         peerAddress: "192.168.200.1",
+      },
+    },
+    {
+      ...k3sOpts,
+      dependsOn: metalLbRelease,
+    },
+  );
+
+  new kubernetes.apiextensions.CustomResource(
+    "metallb-bgp-peer",
+    {
+      apiVersion: "metallb.io/v1beta1",
+      kind: "BGPAdvertisement",
+      metadata: {
+        name: "default",
+        namespace: metalLbRelease.namespace,
+      },
+      spec: {
+        ipAddressPools: [addressPool.metadata.name],
       },
     },
     {
