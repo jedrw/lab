@@ -12,6 +12,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
 
   const releaseName = "prometheus";
   const storageClassName = new pulumi.Config().require("storageClassName");
+  const grafanaHostname = "prometheus-grafana.lupinelab.co.uk";
   const prometheusRelease = new kubernetes.helm.v3.Release(
     releaseName,
     {
@@ -65,6 +66,20 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
               url: "http://loki.loki.svc.cluster.local:3100",
             },
           ],
+          ingress: {
+            enabled: true,
+            annotations: {
+              "cert-manager.io/cluster-issuer": "acme-clusterissuer",
+              "dns.pfsense.org/enabled": "true",
+            },
+            hosts: [grafanaHostname],
+            tls: [
+              {
+                secretName: `${grafanaHostname}-cert`,
+                hosts: [grafanaHostname],
+              },
+            ],
+          },
         },
       },
     },
@@ -91,38 +106,6 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
       },
     },
     k3sOpts,
-  );
-
-  new kubernetes.core.v1.Service(
-    "exposed-grafana-service",
-    {
-      metadata: {
-        name: "prometheus-grafana-exposed",
-        namespace: releaseName,
-        annotations: {
-          "dns.pfsense.org/hostname": "grafana-tk3s.lupinelab.co.uk",
-        },
-      },
-      spec: {
-        type: "LoadBalancer",
-        ports: [
-          {
-            name: "http-web",
-            port: 80,
-            protocol: "TCP",
-            targetPort: 3000,
-          },
-        ],
-        selector: {
-          "app.kubernetes.io/instance": releaseName,
-          "app.kubernetes.io/name": "grafana",
-        },
-      },
-    },
-    {
-      ...k3sOpts,
-      dependsOn: [prometheusRelease],
-    },
   );
 
   return prometheusRelease;
