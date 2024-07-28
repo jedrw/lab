@@ -1,0 +1,15 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      replicas: 2
+    logs:
+      access:
+        enabled: true
+    service:
+      annotations:
+        dns.pfsense.org/hostname: traefik.lupinelab.co.uk

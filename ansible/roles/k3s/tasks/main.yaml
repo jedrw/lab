@@ -29,6 +29,13 @@
     mode: "0600"
   when: inventory_hostname == "k-c-01"
 
+- name: Copy traefik customisation
+  ansible.builtin.copy:
+    src: traefik-config.yaml
+    dest: "/var/lib/rancher/k3s/server/manifests/traefik-config.yaml"
+    mode: "0600"
+  when: inventory_hostname == "k-c-01"
+
 - name: Cluster initialised?
   ansible.builtin.stat:
     path: /var/lib/rancher/k3s/server/node-token
