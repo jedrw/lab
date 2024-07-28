@@ -166,7 +166,7 @@
       "type": "logs"
     }
   ],
-  "refresh": false,
+  "refresh": "auto",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
