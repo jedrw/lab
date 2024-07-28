@@ -40,8 +40,17 @@ export const kubernetesPfsenseController = async (
               options: {
                 frr: {
                   template: {
-                    peergroup: "kube-vip",
+                    peergroup: "tks3",
                   },
+                },
+              },
+            },
+            "pfsense-dns-ingresses": {
+              enabled: true,
+              defaultEnabled: false,
+              dnsBackends: {
+                unbound: {
+                  enabled: true,
                 },
               },
             },

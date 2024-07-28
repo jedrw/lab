@@ -4,10 +4,10 @@ import { proxmoxCsiPlugin } from "./proxmox_csi_plugin";
 import { prometheus } from "./prometheus_stack";
 import { loki } from "./loki_stack";
 import { kubernetesPfsenseController } from "./kubernetes_pfsense_controller";
-import { kubeVip } from "./kube_vip";
-import { kubeVipCloudProvider } from "./kube_vip_cloud_controller";
+import { metalLb } from "./metallb";
 import { externalDns } from "./external_dns";
 import { certManager } from "./cert_manager";
+import { circleciContainerAgent } from "./circleci_container_agent";
 
 export async function buildClusterServices(
   dependsOn: pulumi.Resource[],
@@ -39,13 +39,14 @@ export async function buildClusterServices(
     kproximateRelease,
   ]);
 
-  const kubeVipRelease = await kubeVip([
+  const metalLbRelease = await metalLb([
     ...dependsOn,
     kubernetesPfsenseControllerRelease,
   ]);
-  const kubeVipCloudProviderRelease = await kubeVipCloudProvider([
+
+  const circleciContainerAgentRelease = await circleciContainerAgent([
     ...dependsOn,
-    kubeVipRelease,
+    kproximateRelease,
   ]);
 
   return [
@@ -55,7 +56,7 @@ export async function buildClusterServices(
     externalDnsRelease,
     certManagerRelease,
     kubernetesPfsenseControllerRelease,
-    kubeVipRelease,
-    kubeVipCloudProviderRelease,
+    metalLbRelease,
+    circleciContainerAgentRelease,
   ];
 }
