@@ -12,8 +12,19 @@ import { circleciContainerAgent } from "./circleci_container_agent";
 export async function buildClusterServices(
   dependsOn: pulumi.Resource[],
 ): Promise<pulumi.Resource[]> {
-  const lokiRelease = await loki([...dependsOn]);
-  const kproximateRelease = await kproximate([...dependsOn, lokiRelease]);
+  const kproximateRelease = await kproximate([...dependsOn]);
+  const kubernetesPfsenseControllerRelease = await kubernetesPfsenseController([
+    ...dependsOn,
+    kproximateRelease,
+  ]);
+
+  const metalLbRelease = await metalLb([
+    ...dependsOn,
+    kubernetesPfsenseControllerRelease,
+  ]);
+
+  const lokiRelease = await loki([...dependsOn, kproximateRelease]);
+
   const proxmoxCsiPluginRelease = await proxmoxCsiPlugin([
     ...dependsOn,
     kproximateRelease,
@@ -24,6 +35,7 @@ export async function buildClusterServices(
     lokiRelease,
     kproximateRelease,
     proxmoxCsiPluginRelease,
+    metalLbRelease,
   ]);
 
   const externalDnsRelease = await externalDns([
@@ -33,15 +45,6 @@ export async function buildClusterServices(
   const certManagerRelease = await certManager([
     ...dependsOn,
     kproximateRelease,
-  ]);
-  const kubernetesPfsenseControllerRelease = await kubernetesPfsenseController([
-    ...dependsOn,
-    kproximateRelease,
-  ]);
-
-  const metalLbRelease = await metalLb([
-    ...dependsOn,
-    kubernetesPfsenseControllerRelease,
   ]);
 
   const circleciContainerAgentRelease = await circleciContainerAgent([

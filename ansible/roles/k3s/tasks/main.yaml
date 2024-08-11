@@ -44,7 +44,7 @@
 
 - name: Init k3s cluster
   ansible.builtin.shell:
-    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --cluster-init --disable servicelb --tls-san 'tk3s.lupinelab.co.uk' --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
+    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --cluster-init --disable servicelb --tls-san 'tk3s.lupinelab.co.uk' --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule --node-label topology.kubernetes.io/region=tc --node-label topology.kubernetes.io/zone=tc-{{ inventory_hostname.split("-"[-1]) }}'
   when: inventory_hostname == "k-c-01" and not is_initialised.stat.exists
   register: k3s_initialised
   no_log: true
@@ -58,16 +58,8 @@
 
 - name: Add control-plane node
   ansible.builtin.shell:
-    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --server https://k-c-01:6443 --disable servicelb --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule'
+    cmd: curl -sfL https://get.k3s.io | K3S_TOKEN={{ lookup('env', 'K3S_TOKEN') }} sh -s - server --server https://k-c-01:6443 --disable servicelb --tls-san {{ inventory_hostname }}.lupinedmz --node-taint 'node-role.kubernetes.io/control-plane=:NoSchedule --node-label topology.kubernetes.io/region=tc --node-label topology.kubernetes.io/zone=tc-{{ inventory_hostname.split("-"[-1]) }}'
   when: inventory_hostname != "k-c-01" and not is_control_plane_node.stat.exists
   register: add_control_plane
   no_log: true
   changed_when: add_control_plane.rc == 0
-
-- name: Copy kubeconfig create script
-  ansible.builtin.copy:
-    src: create_kubeconfig
-    dest: /root/
-    mode: u+x
-  become: true
-  when: inventory_hostname == "k-c-01"

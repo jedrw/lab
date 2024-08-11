@@ -7,9 +7,19 @@ spec:
   valuesContent: |-
     deployment:
       replicas: 2
+    additionalArguments:
+     - "--entrypoints.kubernetes.address=:6443/tcp"
+    ports:
+      kubernetes:
+        port: 6443
+        expose: true
+        exposedPort: 6443
+        protocol: TCP
+        tls:
+          enabled: true
     logs:
       access:
         enabled: true
     service:
       annotations:
-        dns.pfsense.org/hostname: traefik.lupinelab.co.uk
+        dns.pfsense.org/hostname: traefik.lupinelab.co.uk,tk3s.lupinelab.co.uk

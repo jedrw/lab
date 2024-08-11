@@ -12,8 +12,7 @@
     append: true
 
 - name: Reset ssh connection to allow user/group changes to take effect
-  ansible.builtin.meta:
-    reset_connection
+  ansible.builtin.meta: reset_connection
 
 - name: Log into DockerHub
   community.docker.docker_login:
@@ -25,9 +24,9 @@
 
 - name: Log into lupinelab registry
   community.docker.docker_login:
-    registry_url: "{{ lookup('env', 'LUPINELAB_REGISTRY_URL') }}"
+    registry_url: "{{ lookup('env', 'REGISTRY_URL') }}"
     username: "{{ lookup('env', 'REGISTRY_USERNAME') }}"
-    password: "{{ lookup('env', 'LUPINELAB_REGISTRY_PASSWD') }}"
+    password: "{{ lookup('env', 'REGISTRY_PASSWD') }}"
     validate_certs: true
   no_log: true
   become: false

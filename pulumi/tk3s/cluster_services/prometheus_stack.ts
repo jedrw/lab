@@ -69,6 +69,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           ingress: {
             enabled: true,
             annotations: {
+              "traefik.ingress.kubernetes.io/router.entrypoints": "websecure",
               "cert-manager.io/cluster-issuer": "acme-clusterissuer",
               "dns.pfsense.org/enabled": "true",
             },
@@ -94,7 +95,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
     {
       metadata: {
         name: "loki-dashboard",
-        namespace: releaseName,
+        namespace: prometheusRelease.namespace,
         labels: {
           grafana_dashboard: "1",
         },

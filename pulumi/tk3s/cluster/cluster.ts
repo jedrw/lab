@@ -94,7 +94,8 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
         {
           ...proxmoxOpts,
           // bugs with disk speed :(
-          ignoreChanges: ["description", "disks[0].speed"],
+          // ignoreChanges: ["description", "disks[0].speed"],
+          ignoreChanges: ["description"],
         },
       ),
     );
@@ -105,12 +106,20 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     config: "prod",
   });
 
+  const clusterSetupDiff = new pulumi.asset.FileArchive(
+    "../../ansible/roles/k3s/",
+  );
+
   const clusterSetup = new command.local.Command("tk3s-setup", {
     create: "ansible-playbook -i inventories/production/ tk3s.yaml",
     dir: "../../ansible/",
     environment: env.map,
-    triggers: [cluster],
+    triggers: [cluster, clusterSetupDiff],
   });
+
+  const generateKubeconfigDiff = new pulumi.asset.FileArchive(
+    "../../ansible/roles/kubeconfig/",
+  );
 
   const generateKubeconfig = new command.local.Command(
     `generate-${process.env["USERNAME"]}-kubeconfig`,
@@ -118,8 +127,9 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
       create: "ansible-playbook -i inventories/production/ kubeconfig.yaml",
       dir: "../../ansible/",
       environment: env.map,
-      triggers: [clusterSetup],
+      triggers: [generateKubeconfigDiff],
     },
+    { dependsOn: [clusterSetup] },
   );
 
   const kubeconfig = new command.remote.Command(
@@ -134,7 +144,8 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
           "utf8",
         ),
       },
-      triggers: [generateKubeconfig],
+      logging: command.remote.Logging.Stderr,
+      triggers: [generateKubeconfig.stdout],
     },
   );
 

@@ -1,3 +1,11 @@
+- name: Copy kubeconfig create script
+  ansible.builtin.copy:
+    src: create_kubeconfig
+    dest: /root/
+    mode: u+x
+  become: true
+  when: inventory_hostname == "k-c-01"
+
 - name: Make dirs
   ansible.builtin.file:
     path: "/var/lib/rancher/k3s/gen/{{ lookup('env', 'USERNAME') }}/{{ item }}"
