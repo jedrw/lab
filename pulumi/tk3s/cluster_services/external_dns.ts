@@ -44,6 +44,8 @@ export const externalDns = async (dependsOn: pulumi.Resource[]) => {
         repo: "https://kubernetes-sigs.github.io/external-dns",
       },
       values: {
+        policy: "sync",
+        interval: "10s",
         provider: {
           name: "cloudflare",
         },
