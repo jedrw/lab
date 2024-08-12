@@ -6,7 +6,7 @@ metadata:
 spec:
   valuesContent: |-
     deployment:
-      replicas: 2
+      replicas: 3
     additionalArguments:
      - "--entrypoints.kubernetes.address=:6443/tcp"
     ports:

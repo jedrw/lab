@@ -35,6 +35,13 @@
     dest: "/var/lib/rancher/k3s/server/manifests/traefik-config.yaml"
     mode: "0600"
   when: inventory_hostname == "k-c-01"
+  register: traefik_config_copied
+
+- name: Update treafik-config file update time
+  ansible.builtin.file:
+    path: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+    state: touch
+  when: traefik_config_copied.changed && inventory_hostname == "k-c-01"
 
 - name: Cluster initialised?
   ansible.builtin.stat:
@@ -63,3 +70,30 @@
   register: add_control_plane
   no_log: true
   changed_when: add_control_plane.rc == 0
+
+- name: Set coredns replicas
+  ansible.builtin.lineinfile:
+    path: /var/lib/rancher/k3s/server/manifests/coredns.yaml
+    line: "  replicas: 2"
+    regexp: "\\s\\sreplicas: \\d"
+    insertbefore: "^\\s\\srevisionHistoryLimit:\\s0$"
+  register: coredns_updated
+
+- name: Update coredns file update time
+  ansible.builtin.file:
+    path: /var/lib/rancher/k3s/server/manifests/coredns.yaml
+    state: touch
+  when: coredns_updated.changed
+
+- name: Set metrics-server replicas
+  ansible.builtin.lineinfile:
+    path: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-server-deployment.yaml
+    line: "  replicas: 2"
+    regexp: "\\s\\sreplicas: \\d"
+    insertbefore: "^\\s\\srevisionHistoryLimit:\\s0$"
+
+- name: Update metrics-server file update time
+  ansible.builtin.file:
+    path: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-server-deployment.yaml
+    state: touch
+  when: coredns_updated.changed
