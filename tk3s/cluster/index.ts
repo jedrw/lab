@@ -1,4 +1,4 @@
-import { buildCluster } from "./cluster/cluster";
+import { buildCluster } from "./cluster_setup/cluster_setup";
 import { buildClusterServices } from "./cluster_services/cluster_services";
 
 export = async () => {
