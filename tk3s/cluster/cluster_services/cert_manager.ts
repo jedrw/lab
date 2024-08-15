@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 import { k3sOpts } from "../kubernetes";
+import { DEFAULT_CLUSTERISSUER } from "../constants";
 
 export const certManager = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -61,7 +62,7 @@ export const certManager = async (dependsOn: pulumi.Resource[]) => {
       apiVersion: "cert-manager.io/v1",
       kind: "ClusterIssuer",
       metadata: {
-        name: "acme-clusterissuer",
+        name: DEFAULT_CLUSTERISSUER,
       },
       spec: {
         acme: {

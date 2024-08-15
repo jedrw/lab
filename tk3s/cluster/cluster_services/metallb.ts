@@ -89,49 +89,6 @@ export const metalLb = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
-  // This is purely for the purpose of keeping the dns entry for
-  // the control plane synced with the LB IP of traefik using the
-  // "dns.pfsense.org/enabled" annotation.
-  // new kubernetes.networking.v1.Ingress(
-  //   "api-server-ingress",
-  //   {
-  //     metadata: {
-  //       name: "api-server-ingress",
-  //       namespace: "default",
-  //       annotations: {
-  //         "dns.pfsense.org/enabled": "true",
-  //       },
-  //     },
-  //     spec: {
-  //       rules: [
-  //         {
-  //           host: "tk3s.lupinelab.co.uk",
-  //           http: {
-  //             paths: [
-  //               {
-  //                 path: "/",
-  //                 pathType: "Prefix",
-  //                 backend: {
-  //                   service: {
-  //                     name: "kubernetes",
-  //                     port: {
-  //                       name: "https",
-  //                     },
-  //                   },
-  //                 },
-  //               },
-  //             ],
-  //           },
-  //         },
-  //       ],
-  //     },
-  //   },
-  //   {
-  //     ...k3sOpts,
-  //     dependsOn: metalLbRelease,
-  //   },
-  // );
-
   new kubernetes.apiextensions.CustomResource(
     "api-server-ingress",
     {

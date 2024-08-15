@@ -1,9 +1,12 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import { merge } from "ts-deepmerge";
+import {
+  DEFAULT_CLUSTERISSUER,
+  DEFAULT_TRAEFIK_ENTRYPOINT,
+} from "../cluster/constants";
 
 const DEFAULT_INGRESS_CLASS = "traefik";
-const DEFAULT_ISSUER = "acme-clusterissuer";
 const CLOUDFLARE_TARGET_RECORD = "lupinelab.co.uk";
 
 type Expose = "internal" | "external";
@@ -20,7 +23,7 @@ interface Values {
 
 function setTlsValues(defaultValues: Values, hostname: pulumi.Input<string>) {
   defaultValues["ingress"]["annotations"]["cert-manager.io/cluster-issuer"] =
-    DEFAULT_ISSUER;
+    DEFAULT_CLUSTERISSUER;
 
   defaultValues["ingress"]["tls"] = [
     {
@@ -46,7 +49,8 @@ function generateValues(
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
         annotations: {
-          "traefik.ingress.kubernetes.io/router.entrypoints": "websecure",
+          "traefik.ingress.kubernetes.io/router.entrypoints":
+            DEFAULT_TRAEFIK_ENTRYPOINT,
           "external-dns.alpha.kubernetes.io/hostname": hostname,
           "external-dns.alpha.kubernetes.io/target": CLOUDFLARE_TARGET_RECORD,
           "external-dns.alpha.kubernetes.io/cloudflare-proxied": "true",
@@ -70,7 +74,8 @@ function generateValues(
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
         annotations: {
-          "traefik.ingress.kubernetes.io/router.entrypoints": "websecure",
+          "traefik.ingress.kubernetes.io/router.entrypoints":
+            DEFAULT_TRAEFIK_ENTRYPOINT,
           "dns.pfsense.org/enabled": "true",
         },
         hosts: [

@@ -3,6 +3,11 @@ import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 import * as fs from "fs";
 import { k3sOpts } from "../kubernetes";
+import {
+  DEFAULT_CLUSTERISSUER,
+  DEFAULT_TRAEFIK_ENTRYPOINT,
+  PROXOMX_CSI_STORAGECLASS,
+} from "../constants";
 
 export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -11,7 +16,6 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   });
 
   const releaseName = "prometheus";
-  const storageClassName = new pulumi.Config().require("storageClassName");
   const grafanaHostname = "prometheus-grafana.lupinelab.co.uk";
   const prometheusRelease = new kubernetes.helm.v3.Release(
     releaseName,
@@ -35,7 +39,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
             storageSpec: {
               volumeClaimTemplate: {
                 spec: {
-                  storageClassName: storageClassName,
+                  storageClassName: PROXOMX_CSI_STORAGECLASS,
                   accessModes: ["ReadWriteOnce"],
                   resources: {
                     requests: {
@@ -52,7 +56,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           persistence: {
             enabled: true,
             type: "pvc",
-            storageClassName: storageClassName,
+            storageClassName: PROXOMX_CSI_STORAGECLASS,
             accessModes: ["ReadWriteOnce"],
             size: "20G",
           },
@@ -69,8 +73,9 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           ingress: {
             enabled: true,
             annotations: {
-              "traefik.ingress.kubernetes.io/router.entrypoints": "websecure",
-              "cert-manager.io/cluster-issuer": "acme-clusterissuer",
+              "traefik.ingress.kubernetes.io/router.entrypoints":
+                DEFAULT_TRAEFIK_ENTRYPOINT,
+              "cert-manager.io/cluster-issuer": DEFAULT_CLUSTERISSUER,
               "dns.pfsense.org/enabled": "true",
             },
             hosts: [grafanaHostname],
