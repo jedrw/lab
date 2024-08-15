@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  publish-deployment-module:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/project/tk3s/deployment
+    steps:
+      - checkout:
+          path: ~/project
+      - run:
+          name: Set version from git tag
+          command: npm --no-git-tag-version version from-git
+      - run:
+          name: Install
+          command: npm ci
+      - run:
+          name: Publish
+          command: npm publish
+  
+workflows:
+  publish-deployment-module:
+    jobs:
+      - publish-deployment-module:
+          context:
+            - github
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /\d+\.\d+\.\d+/
+
