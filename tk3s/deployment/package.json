@@ -1,6 +1,6 @@
 {
     "name": "@lupinelab/tk3s-deployment",
-    "main": "dist/index.js",
+    "main": "dist/deployment/index.js",
     "type": "commonjs",
     "files": [
         "dist/"
