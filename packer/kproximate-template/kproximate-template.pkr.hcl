@@ -56,7 +56,7 @@ source "proxmox-iso" "kproximate-template" {
   cloud_init    = true
   cloud_init_storage_pool = "vms"
   disks {
-    disk_size    = "10G"
+    disk_size    = "20G"
     storage_pool = "vms"
     type         = "virtio"
   }
