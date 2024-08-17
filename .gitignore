@@ -1,3 +1,7 @@
 .vscode/
 **/.terraform
 **/terraform.tfstate*
+
+**/bin/
+**/dist/
+**/node_modules/
