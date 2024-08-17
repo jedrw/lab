@@ -11,6 +11,28 @@ const CLOUDFLARE_TARGET_RECORD = "lupinelab.co.uk";
 
 type Expose = "internal" | "external";
 
+export function getEnv() {
+  const stack = pulumi.getStack();
+  switch (stack) {
+    case "production":
+      return "prod";
+    case "develop":
+      return "dev";
+    default:
+      return stack;
+  }
+}
+
+export function hostnamePrefix() {
+  const env = getEnv();
+  switch (env) {
+    case "prod":
+      return "";
+    default:
+      return `${env}-`;
+  }
+}
+
 export interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
   hostname?: pulumi.Input<string>;
   expose?: Expose;
