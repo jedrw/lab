@@ -93,8 +93,6 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
         },
         {
           ...proxmoxOpts,
-          // bugs with disk speed :(
-          // ignoreChanges: ["description", "disks[0].speed"],
           ignoreChanges: ["description"],
         },
       ),
