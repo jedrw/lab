@@ -11,11 +11,11 @@ const CLOUDFLARE_TARGET_RECORD = "lupinelab.co.uk";
 
 type Expose = "internal" | "external";
 
-export function getEnv() {
+export function getEnv(skipAbbreviation?: boolean) {
   const stack = pulumi.getStack();
   switch (stack) {
     case "production":
-      return "prod";
+      return skipAbbreviation ? "production" : "prod";
     case "develop":
       return "dev";
     default:
