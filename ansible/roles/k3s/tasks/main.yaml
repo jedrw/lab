@@ -41,7 +41,7 @@
   ansible.builtin.file:
     path: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
     state: touch
-  when: traefik_config_copied.changed && inventory_hostname == "k-c-01"
+  when: traefik_config_copied.changed and inventory_hostname == "k-c-01"
 
 - name: Cluster initialised?
   ansible.builtin.stat:
