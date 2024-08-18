@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
+import * as os from "os";
 import { merge } from "ts-deepmerge";
 import {
   DEFAULT_CLUSTERISSUER,
@@ -32,6 +33,17 @@ export function hostnamePrefix() {
       return `${env}-`;
   }
 }
+
+// Expects to find a kubeconfig file in ~/.kube/config as
+// is normally produced by the install-kubeconfig job from
+// the circleci/kubernetes orb.
+export const k8sProvider = () => {
+  return new kubernetes.Provider("tk3s", {
+    kubeconfig: `${os.homedir()}/.kube/config`,
+    context: "tk3s",
+    deleteUnreachable: true,
+  });
+};
 
 export interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
   hostname?: pulumi.Input<string>;
