@@ -8,6 +8,7 @@ import { metalLb } from "./metallb";
 import { externalDns } from "./external_dns";
 import { certManager } from "./cert_manager";
 import { circleciContainerAgent } from "./circleci_container_agent";
+import { registry } from "./registry";
 
 export async function buildClusterServices(
   dependsOn: pulumi.Resource[],
@@ -52,6 +53,14 @@ export async function buildClusterServices(
     kproximateRelease,
   ]);
 
+  const registryRelease = await registry([
+    ...dependsOn,
+    kproximateRelease,
+    kubernetesPfsenseControllerRelease,
+    externalDnsRelease,
+    proxmoxCsiPluginRelease,
+  ]);
+
   return [
     lokiRelease,
     kproximateRelease,
@@ -61,5 +70,6 @@ export async function buildClusterServices(
     kubernetesPfsenseControllerRelease,
     metalLbRelease,
     circleciContainerAgentRelease,
+    registryRelease,
   ];
 }
