@@ -3,11 +3,8 @@ import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 import * as fs from "fs";
 import { k3sOpts } from "../kubernetes";
-import {
-  DEFAULT_CLUSTERISSUER,
-  DEFAULT_TRAEFIK_ENTRYPOINT,
-  PROXOMX_CSI_STORAGECLASS,
-} from "../constants";
+import { DEFAULT_CLUSTERISSUER, PROXMOX_CSI_STORAGECLASS } from "../constants";
+import { internalIngressAnnotations } from "../../deployment/utils";
 
 export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -39,7 +36,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
             storageSpec: {
               volumeClaimTemplate: {
                 spec: {
-                  storageClassName: PROXOMX_CSI_STORAGECLASS,
+                  storageClassName: PROXMOX_CSI_STORAGECLASS,
                   accessModes: ["ReadWriteOnce"],
                   resources: {
                     requests: {
@@ -56,7 +53,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           persistence: {
             enabled: true,
             type: "pvc",
-            storageClassName: PROXOMX_CSI_STORAGECLASS,
+            storageClassName: PROXMOX_CSI_STORAGECLASS,
             accessModes: ["ReadWriteOnce"],
             size: "20G",
           },
@@ -73,10 +70,8 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           ingress: {
             enabled: true,
             annotations: {
-              "traefik.ingress.kubernetes.io/router.entrypoints":
-                DEFAULT_TRAEFIK_ENTRYPOINT,
+              ...internalIngressAnnotations(),
               "cert-manager.io/cluster-issuer": DEFAULT_CLUSTERISSUER,
-              "dns.pfsense.org/enabled": "true",
             },
             hosts: [grafanaHostname],
             tls: [

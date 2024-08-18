@@ -1,49 +1,16 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
-import * as os from "os";
 import { merge } from "ts-deepmerge";
 import {
   DEFAULT_CLUSTERISSUER,
-  DEFAULT_TRAEFIK_ENTRYPOINT,
+  DEFAULT_INGRESS_CLASS,
 } from "../cluster/constants";
-
-const DEFAULT_INGRESS_CLASS = "traefik";
-const CLOUDFLARE_TARGET_RECORD = "lupinelab.co.uk";
+import {
+  externalIngressAnnotations,
+  internalIngressAnnotations,
+} from "./utils";
 
 type Expose = "internal" | "external";
-
-export function getEnv(skipAbbreviation?: boolean) {
-  const stack = pulumi.getStack();
-  switch (stack) {
-    case "production":
-      return skipAbbreviation ? "production" : "prod";
-    case "develop":
-      return "dev";
-    default:
-      return stack;
-  }
-}
-
-export function hostnamePrefix() {
-  const env = getEnv();
-  switch (env) {
-    case "prod":
-      return "";
-    default:
-      return `${env}-`;
-  }
-}
-
-// Expects to find a kubeconfig file in ~/.kube/config as
-// is normally produced by the install-kubeconfig job from
-// the circleci/kubernetes orb.
-export const k8sProvider = () => {
-  return new kubernetes.Provider("tk3s", {
-    kubeconfig: `${os.homedir()}/.kube/config`,
-    context: "tk3s",
-    deleteUnreachable: true,
-  });
-};
 
 export interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
   hostname?: pulumi.Input<string>;
@@ -73,22 +40,16 @@ function generateValues(
   expose?: Expose,
   disableTls?: boolean
 ) {
-  if (expose && !hostname) {
-    throw new Error("hostname is required for an exposed deployment");
-  }
-
   const defaultValues: Values = {};
   switch (expose) {
     case "external":
+      if (!hostname) {
+        throw new Error("hostname is required for an exposed deployment");
+      }
+
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
-        annotations: {
-          "traefik.ingress.kubernetes.io/router.entrypoints":
-            DEFAULT_TRAEFIK_ENTRYPOINT,
-          "external-dns.alpha.kubernetes.io/hostname": hostname,
-          "external-dns.alpha.kubernetes.io/target": CLOUDFLARE_TARGET_RECORD,
-          "external-dns.alpha.kubernetes.io/cloudflare-proxied": "true",
-        },
+        annotations: externalIngressAnnotations(hostname),
         hosts: [
           {
             host: hostname,
@@ -105,13 +66,13 @@ function generateValues(
       break;
 
     case "internal":
+      if (!hostname) {
+        throw new Error("hostname is required for an exposed deployment");
+      }
+
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
-        annotations: {
-          "traefik.ingress.kubernetes.io/router.entrypoints":
-            DEFAULT_TRAEFIK_ENTRYPOINT,
-          "dns.pfsense.org/enabled": "true",
-        },
+        annotations: internalIngressAnnotations(),
         hosts: [
           {
             host: hostname,
@@ -129,7 +90,10 @@ function generateValues(
   }
 
   if (expose && !disableTls) {
-    setTlsValues(defaultValues, hostname!);
+    if (!hostname) {
+      throw new Error("hostname is required for tls");
+    }
+    setTlsValues(defaultValues, hostname);
   }
 
   return merge(defaultValues, values);

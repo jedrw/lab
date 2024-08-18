@@ -4,7 +4,7 @@ import * as proxmox from "@muhlba91/pulumi-proxmoxve";
 
 import { proxmoxOpts } from "../proxmox";
 import { k3sOpts } from "../kubernetes";
-import { PROXOMX_CSI_STORAGECLASS } from "../constants";
+import { PROXMOX_CSI_STORAGECLASS } from "../constants";
 
 export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
   const releaseName = "proxmox-csi";
@@ -88,7 +88,7 @@ export const proxmoxCsiPlugin = async (dependsOn: pulumi.Resource[]) => {
         },
         storageClass: [
           {
-            name: PROXOMX_CSI_STORAGECLASS,
+            name: PROXMOX_CSI_STORAGECLASS,
             storage: "vms",
             reclaimPolicy: "Retain",
             allowVolumeExpansion: true,
