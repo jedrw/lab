@@ -6,8 +6,8 @@
         "dist/"
     ],
     "scripts": {
-        "tsc": "tsc",
-        "prepublishOnly": "npm run tsc"
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@types/node": "^18",
