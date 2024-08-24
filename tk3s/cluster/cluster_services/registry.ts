@@ -2,11 +2,12 @@ import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 import {
+  CLOUDFLARE_TARGET_RECORD,
   DEFAULT_CLUSTERISSUER,
   DEFAULT_INGRESS_CLASS,
+  DEFAULT_TRAEFIK_ENTRYPOINT,
   PROXMOX_CSI_STORAGECLASS,
 } from "../constants";
-import { externalIngressAnnotations } from "../../deployment/utils";
 import { k3sOpts } from "../kubernetes";
 
 export const registry = async (dependsOn: pulumi.Resource[]) => {
@@ -33,7 +34,11 @@ export const registry = async (dependsOn: pulumi.Resource[]) => {
           className: DEFAULT_INGRESS_CLASS,
           hosts: [hostname],
           annotations: {
-            ...externalIngressAnnotations(hostname),
+            "traefik.ingress.kubernetes.io/router.entrypoints":
+              DEFAULT_TRAEFIK_ENTRYPOINT,
+            "external-dns.alpha.kubernetes.io/hostname": hostname,
+            "external-dns.alpha.kubernetes.io/target": CLOUDFLARE_TARGET_RECORD,
+            "external-dns.alpha.kubernetes.io/cloudflare-proxied": "true",
             "cert-manager.io/cluster-issuer": DEFAULT_CLUSTERISSUER,
           },
           tls: [
@@ -50,6 +55,37 @@ export const registry = async (dependsOn: pulumi.Resource[]) => {
         },
         secrets: {
           htpasswd: secrets.map["REGISTRY_HTPASSWD"],
+        },
+        tolerations: [
+          {
+            key: "node-role.kubernetes.io/control-plane",
+            effect: "NoSchedule",
+          },
+          {
+            key: "node-role.kubernetes.io/master",
+            effect: "NoSchedule",
+          },
+        ],
+        affinity: {
+          nodeAffinity: {
+            preferredDuringSchedulingIgnoredDuringExecution: [
+              {
+                weight: 1,
+                preference: {
+                  matchExpressions: [
+                    {
+                      key: "node-role.kubernetes.io/control-plane",
+                      operator: "Exists",
+                    },
+                    {
+                      key: "node-role.kubernetes.io/master",
+                      operator: "Exists",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
         },
       },
     },

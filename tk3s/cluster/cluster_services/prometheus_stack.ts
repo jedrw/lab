@@ -3,8 +3,11 @@ import * as kubernetes from "@pulumi/kubernetes";
 import * as doppler from "@pulumiverse/doppler";
 import * as fs from "fs";
 import { k3sOpts } from "../kubernetes";
-import { DEFAULT_CLUSTERISSUER, PROXMOX_CSI_STORAGECLASS } from "../constants";
-import { internalIngressAnnotations } from "../../deployment/utils";
+import {
+  DEFAULT_CLUSTERISSUER,
+  DEFAULT_TRAEFIK_ENTRYPOINT,
+  PROXMOX_CSI_STORAGECLASS,
+} from "../constants";
 
 export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -70,7 +73,9 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
           ingress: {
             enabled: true,
             annotations: {
-              ...internalIngressAnnotations(),
+              "traefik.ingress.kubernetes.io/router.entrypoints":
+                DEFAULT_TRAEFIK_ENTRYPOINT,
+              "dns.pfsense.org/enabled": "true",
               "cert-manager.io/cluster-issuer": DEFAULT_CLUSTERISSUER,
             },
             hosts: [grafanaHostname],
