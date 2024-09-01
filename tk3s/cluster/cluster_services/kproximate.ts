@@ -100,13 +100,11 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
   const release = new kubernetes.helm.v3.Release(
     releaseName,
     {
-      chart: "kproximate",
+      chart: "oci://ghcr.io/lupinelab/kproximate",
+      version: "0.2.0",
       name: releaseName,
       createNamespace: true,
       namespace: releaseName,
-      repositoryOpts: {
-        repo: "https://charts.lupinelab.co.uk",
-      },
       values: {
         kproximate: {
           config: {
@@ -114,10 +112,10 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
             kpNodeCores: 4,
             kpNodeMemory: 4096,
             kpNodeLabels:
-              "topology.kubernetes.io/region=tc,topology.kubernetes.io/zone={{ targetHost }}",
+              "topology.kubernetes.io/region=tc,topology.kubernetes.io/zone={{ .TargetHost }}",
             kpNodeTemplateName: "kproximate-template",
             kpQemuExecJoin: true,
-            maxKpNodes: 3,
+            maxKpNodes: 6,
             pmDebug: false,
             pmAllowInsecure: true,
             pmUrl: proxmoxEndpoint,
