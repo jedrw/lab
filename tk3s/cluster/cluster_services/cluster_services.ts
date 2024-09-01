@@ -9,6 +9,7 @@ import { externalDns } from "./external_dns";
 import { certManager } from "./cert_manager";
 import { circleciContainerAgent } from "./circleci_container_agent";
 import { registry } from "./registry";
+import { chartmuseum } from "./chartmuseum";
 
 export async function buildClusterServices(
   dependsOn: pulumi.Resource[],
@@ -61,6 +62,14 @@ export async function buildClusterServices(
     proxmoxCsiPluginRelease,
   ]);
 
+  const chartmuseumRelease = await chartmuseum([
+    ...dependsOn,
+    kproximateRelease,
+    kubernetesPfsenseControllerRelease,
+    externalDnsRelease,
+    proxmoxCsiPluginRelease,
+  ]);
+
   return [
     lokiRelease,
     kproximateRelease,
@@ -71,5 +80,6 @@ export async function buildClusterServices(
     metalLbRelease,
     circleciContainerAgentRelease,
     registryRelease,
+    chartmuseumRelease
   ];
 }
