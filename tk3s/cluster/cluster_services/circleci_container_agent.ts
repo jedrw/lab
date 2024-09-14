@@ -23,10 +23,10 @@ export const circleciContainerAgent = async (dependsOn: pulumi.Resource[]) => {
       values: {
         agent: {
           resourceClasses: {
-            // TODO
-            // "billyrothman/tk3s": {
-            //   token: secrets.map["MRROTHMANMATHS_TK3S_RESOURCE_CLASS_TOKEN"],
-            // },
+            // TODO get Bill to make make new tk3s resource class.
+            "billyrothman/tk3s": {
+              token: secrets.map["MRROTHMANMATHS_QK3S_RESOURCE_CLASS_TOKEN"],
+            },
             "lupinelab/tk3s": {
               token: secrets.map["LUPINELAB_TK3S_RESOURCE_CLASS_TOKEN"],
             },

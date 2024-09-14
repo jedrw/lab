@@ -99,7 +99,7 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     );
   }
 
-  let env = await doppler.getSecrets({
+  const env = await doppler.getSecrets({
     project: "lupinecluster_infrastructure",
     config: "prod",
   });
