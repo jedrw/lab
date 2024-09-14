@@ -1,10 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
 import { merge } from "ts-deepmerge";
-import {
-  DEFAULT_CLUSTERISSUER,
-  DEFAULT_INGRESS_CLASS,
-} from "../cluster/constants";
+import { DEFAULT_INGRESS_CLASS } from "../cluster/constants";
 import {
   externalIngressAnnotations,
   internalIngressAnnotations,
@@ -12,7 +9,7 @@ import {
 
 type Expose = "internal" | "external";
 
-export interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
+interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
   hostname?: pulumi.Input<string>;
   expose?: Expose;
   disableTls?: boolean;
@@ -20,18 +17,6 @@ export interface DeploymentArgs extends kubernetes.helm.v3.ReleaseArgs {
 
 interface Values {
   [key: string]: any;
-}
-
-function setTlsValues(defaultValues: Values, hostname: pulumi.Input<string>) {
-  defaultValues["ingress"]["annotations"]["cert-manager.io/cluster-issuer"] =
-    DEFAULT_CLUSTERISSUER;
-
-  defaultValues["ingress"]["tls"] = [
-    {
-      hosts: [hostname],
-      secretName: `${hostname}-cert`,
-    },
-  ];
 }
 
 function generateValues(
@@ -49,7 +34,7 @@ function generateValues(
 
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
-        annotations: externalIngressAnnotations(hostname),
+        annotations: externalIngressAnnotations({ hostname, disableTls }),
         hosts: [
           {
             host: hostname,
@@ -93,7 +78,13 @@ function generateValues(
     if (!hostname) {
       throw new Error("hostname is required for tls");
     }
-    setTlsValues(defaultValues, hostname);
+
+    defaultValues["ingress"]["tls"] = [
+      {
+        hosts: [hostname],
+        secretName: `${hostname}-cert`,
+      },
+    ];
   }
 
   return merge(defaultValues, values);

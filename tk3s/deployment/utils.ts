@@ -3,6 +3,7 @@ import * as kubernetes from "@pulumi/kubernetes";
 import * as os from "os";
 import {
   CLOUDFLARE_TARGET_RECORD,
+  DEFAULT_CLUSTERISSUER,
   DEFAULT_TRAEFIK_ENTRYPOINT,
 } from "../cluster/constants";
 
@@ -39,13 +40,27 @@ export const k8sProvider = () => {
   });
 };
 
-export function externalIngressAnnotations(hostname: pulumi.Input<string>) {
+interface ExternalIngressArgs {
+  hostname: pulumi.Input<string>;
+  target?: pulumi.Input<string>;
+  disableTls?: pulumi.Input<boolean>;
+}
+
+export function externalIngressAnnotations({
+  hostname,
+  target,
+  disableTls,
+}: ExternalIngressArgs) {
   return {
     "traefik.ingress.kubernetes.io/router.entrypoints":
       DEFAULT_TRAEFIK_ENTRYPOINT,
     "external-dns.alpha.kubernetes.io/hostname": hostname,
-    "external-dns.alpha.kubernetes.io/target": CLOUDFLARE_TARGET_RECORD,
+    "external-dns.alpha.kubernetes.io/target":
+      target ?? CLOUDFLARE_TARGET_RECORD,
     "external-dns.alpha.kubernetes.io/cloudflare-proxied": "true",
+    "cert-manager.io/cluster-issuer": disableTls
+      ? undefined
+      : DEFAULT_CLUSTERISSUER,
   };
 }
 
