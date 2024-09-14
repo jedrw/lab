@@ -31,17 +31,14 @@ all:
         qmail:
           ansible_host: 192.168.20.10
         tshare:
-          ansible_host: 192.168.20.92
+          ansible_host: 192.168.20.11
           additional_disks:
             - device: vdb
               mountpoint: /tcdata
           nfs_shares:
-            - helm-charts
             - mrrothmanmaths
-            - ntexpenses
             - ombi
             - portainer
-            - registry
         qdocker:
           ansible_host: 192.168.20.7
       vars:

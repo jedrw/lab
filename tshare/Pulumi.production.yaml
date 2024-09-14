@@ -1,0 +1,2 @@
+config:
+  tshare:proxmoxEndpoint: https://192.168.20.31:8006/api2/json
