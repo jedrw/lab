@@ -64,10 +64,13 @@ export function externalIngressAnnotations({
   };
 }
 
-export function internalIngressAnnotations() {
+export function internalIngressAnnotations(disableTls?: pulumi.Input<boolean>) {
   return {
     "traefik.ingress.kubernetes.io/router.entrypoints":
       DEFAULT_TRAEFIK_ENTRYPOINT,
     "dns.pfsense.org/enabled": "true",
+    "cert-manager.io/cluster-issuer": disableTls
+      ? undefined
+      : DEFAULT_CLUSTERISSUER,
   };
 }
