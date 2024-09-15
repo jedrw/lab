@@ -57,7 +57,7 @@ function generateValues(
 
       defaultValues["ingress"] = {
         className: DEFAULT_INGRESS_CLASS,
-        annotations: internalIngressAnnotations(),
+        annotations: internalIngressAnnotations(disableTls),
         hosts: [
           {
             host: hostname,
