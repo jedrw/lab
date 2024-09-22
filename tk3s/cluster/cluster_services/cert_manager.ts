@@ -48,6 +48,10 @@ export const certManager = async (dependsOn: pulumi.Resource[]) => {
         crds: {
           enabled: true,
         },
+        extraArgs: [
+          "--dns01-recursive-nameservers-only",
+          "--dns01-recursive-nameservers=1.1.1.1:53",
+        ],
       },
     },
     {
