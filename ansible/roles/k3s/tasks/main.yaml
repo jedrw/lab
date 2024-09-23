@@ -74,7 +74,7 @@
 - name: Set coredns replicas
   ansible.builtin.lineinfile:
     path: /var/lib/rancher/k3s/server/manifests/coredns.yaml
-    line: "  replicas: 2"
+    line: "  replicas: 3"
     regexp: "\\s\\sreplicas: \\d"
     insertbefore: "^\\s\\srevisionHistoryLimit:\\s0$"
   register: coredns_updated
@@ -88,7 +88,7 @@
 - name: Set metrics-server replicas
   ansible.builtin.lineinfile:
     path: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-server-deployment.yaml
-    line: "  replicas: 2"
+    line: "  replicas: 3"
     regexp: "\\s\\sreplicas: \\d"
     insertbefore: "^\\s\\srevisionHistoryLimit:\\s0$"
 
