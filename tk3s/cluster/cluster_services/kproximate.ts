@@ -100,7 +100,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
   const release = new kubernetes.helm.v3.Release(
     releaseName,
     {
-      chart: "oci://ghcr.io/lupinelab/kproximate",
+      chart: "oci://ghcr.io/jedrw/kproximate",
       version: "0.2.0",
       name: releaseName,
       createNamespace: true,

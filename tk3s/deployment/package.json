@@ -1,5 +1,5 @@
 {
-    "name": "@lupinelab/tk3s-deployment",
+    "name": "@jedrw/tk3s-deployment",
     "main": "dist/deployment/index.js",
     "type": "commonjs",
     "files": [
@@ -19,11 +19,11 @@
         "ts-deepmerge": "^7.0.1"
     },
     "publishConfig": {
-        "@lupinelab:registry": "https://npm.pkg.github.com"
+        "@jedrw:registry": "https://npm.pkg.github.com"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/lupinelab/lab.git",
+        "url": "git+https://github.com/jedrw/lab.git",
         "directory": "tk3s/deployment"
     }
 }
