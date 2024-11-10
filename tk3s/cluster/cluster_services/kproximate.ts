@@ -95,13 +95,13 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
 
   const proxmoxEndpoint = new pulumi.Config().require("proxmoxEndpoint");
 
-  // This relies on there to be a compatible template named `kproximate-template`
+  // This relies on there being a compatible template named `kproximate-template`
   // present on the proxmox cluster.
   const release = new kubernetes.helm.v3.Release(
     releaseName,
     {
       chart: "oci://ghcr.io/jedrw/kproximate",
-      version: "0.2.0",
+      version: "0.2.1",
       name: releaseName,
       createNamespace: true,
       namespace: releaseName,
