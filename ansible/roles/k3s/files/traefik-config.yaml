@@ -8,8 +8,10 @@ spec:
     deployment:
       replicas: 3
     additionalArguments:
-     - "--entrypoints.web.proxyProtocol.trustedIPs=192.168.200.1"
-     - "--entrypoints.websecure.proxyProtocol.trustedIPs=192.168.200.1" 
+     # 10.42.0.0/8 is the flannel subnet that all connections into the cluster
+     # via metallb appear to come from. 
+     - "--entrypoints.web.proxyProtocol.trustedIPs=10.42.0.0/8"
+     - "--entrypoints.websecure.proxyProtocol.trustedIPs=10.42.0.0/8"
      - "--entrypoints.kubernetes.address=:6443/tcp"
     ports:
       kubernetes:
