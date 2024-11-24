@@ -14,6 +14,10 @@ spec:
      - "--entrypoints.websecure.proxyProtocol.trustedIPs=10.42.0.0/8"
      - "--entrypoints.kubernetes.address=:6443/tcp"
     ports:
+      websecure:
+        http:
+          middlewares:
+            - cloudflarewarp
       kubernetes:
         port: 6443
         expose: true
@@ -24,6 +28,20 @@ spec:
     logs:
       access:
         enabled: true
+    plugins:
+      cloudflarewarp:
+        moduleName: github.com/BetterCorp/cloudflarewarp
+        version: v1.3.3
+    providers:
+      file:
+        enabled: true
+        content: |
+          http:
+            middlewares:
+              cloudflarewarp:
+                plugin:
+                  cloudflarewarp:
+                    disableDefault: false
     service:
       annotations:
         dns.pfsense.org/hostname: traefik.lupinelab.co.uk,tk3s.lupinelab.co.uk
