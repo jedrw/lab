@@ -1,6 +1,6 @@
 all:
   hosts:
-  children: 
+  children:
     proxmox_nodes:
       hosts:
         tc-01:
@@ -39,8 +39,8 @@ all:
             - mrrothmanmaths
             - ombi
             - portainer
-        qdocker:
-          ansible_host: 192.168.20.7
+        tdocker:
+          ansible_host: 192.168.20.7?????
       vars:
         ansible_user: jedrw
     tk3s:
