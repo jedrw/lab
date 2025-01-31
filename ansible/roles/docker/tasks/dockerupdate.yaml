@@ -1,31 +1,31 @@
 - name: Get latest release info for dockerupdate
   ansible.builtin.uri:
     url: https://api.github.com/repos/lupinelab/dockerupdate/releases/latest
-    return_content: true                                             
+    return_content: true
   register: latest_release
 
 - name: Make a workdir
   ansible.builtin.file:
     path: /tmp/dockerupdate
     state: directory
-    mode: 0700
+    mode: "0700"
 
 - name: Download dockerupdate
   ansible.builtin.get_url:
     url: "{{ latest_release.json.assets[0].browser_download_url }}"
     dest: /tmp/dockerupdate/dockerupdate.tar.gz
-    mode: 0700
+    mode: "0700"
 
 - name: Un-archive dockerupdate
   ansible.builtin.unarchive:
     remote_src: true
-    src:  /tmp/dockerupdate/dockerupdate.tar.gz
-    dest:  /tmp/dockerupdate
+    src: /tmp/dockerupdate/dockerupdate.tar.gz
+    dest: /tmp/dockerupdate
 
 - name: Install dockerupdate
   ansible.builtin.command:
-    chdir:  /tmp/dockerupdate/
-    cmd: "python3 install.py"    
+    chdir: /tmp/dockerupdate/
+    cmd: "python3 install.py"
   register: output
   changed_when: output.rc == 0
   failed_when: output.rc != 0
@@ -34,10 +34,10 @@
   ansible.builtin.file:
     path: "/home/{{ lookup('env', 'USERNAME') }}/docker"
     state: directory
-    mode: 0755
+    mode: "0755"
   become: false
 
 - name: Remove workdir
   ansible.builtin.file:
     path: "/tmp/{{ lookup('env', 'USERNAME') }}/dockerupdate"
-    state: absent 
+    state: absent

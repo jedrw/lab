@@ -4,8 +4,8 @@
     state: directory
     owner: "{{ lookup('env', 'USERNAME') }}"
     group: "{{ lookup('env', 'USERNAME') }}"
-    mode: 0770
-  become: false 
+    mode: "0770"
+  become: false
   loop: "{{ containers }}"
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'test'
 
@@ -19,8 +19,8 @@
   ansible.builtin.copy:
     src: "{{ item }}.yml"
     dest: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}/docker-compose.yml"
-    mode: 0660
-  become: false 
+    mode: "0660"
+  become: false
   loop: "{{ containers }}"
   loop_control:
     extended: true
@@ -30,5 +30,5 @@
   community.docker.docker_compose:
     project_src: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}"
     pull: true
-  become: false 
+  become: false
   loop: "{{ containers }}"
