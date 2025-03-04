@@ -9,7 +9,7 @@ import { k3sOpts } from "../kubernetes";
 
 export const kproximate = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
-    project: "lupinecluster_infrastructure",
+    project: "lab",
     config: "prod",
   });
 
@@ -101,7 +101,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
     releaseName,
     {
       chart: "oci://ghcr.io/jedrw/kproximate",
-      version: "0.2.1",
+      version: "0.2.2",
       name: releaseName,
       createNamespace: true,
       namespace: releaseName,

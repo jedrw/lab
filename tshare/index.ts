@@ -91,7 +91,7 @@ export = async () => {
   );
 
   const env = await doppler.getSecrets({
-    project: "lupinecluster_infrastructure",
+    project: "lab",
     config: "prod",
   });
 
