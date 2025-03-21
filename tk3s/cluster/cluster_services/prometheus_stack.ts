@@ -35,7 +35,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
         },
         prometheus: {
           prometheusSpec: {
-            retention: "90d",
+            retention: "60d",
             storageSpec: {
               volumeClaimTemplate: {
                 spec: {
@@ -43,7 +43,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
                   accessModes: ["ReadWriteOnce"],
                   resources: {
                     requests: {
-                      storage: "50G",
+                      storage: "100G",
                     },
                   },
                 },
