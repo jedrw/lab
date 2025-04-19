@@ -1,6 +1,8 @@
 all:
+  vars:
+    username: jedrw
   hosts:
-  children: 
+  children:
     proxmox_nodes:
       hosts:
         tc-01:

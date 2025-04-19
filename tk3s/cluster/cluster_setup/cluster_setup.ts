@@ -124,7 +124,6 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
     {
       create: "ansible-playbook -i inventories/production/ kubeconfig.yaml",
       dir: "../../ansible/",
-      environment: env.map,
       triggers: [generateKubeconfigDiff],
     },
     { dependsOn: [clusterSetup] },

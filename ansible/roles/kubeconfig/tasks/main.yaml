@@ -8,10 +8,10 @@
 
 - name: Make dirs
   ansible.builtin.file:
-    path: "/var/lib/rancher/k3s/gen/{{ lookup('env', 'USERNAME') }}/{{ item }}"
+    path: "/var/lib/rancher/k3s/gen/{{ username }}/{{ item }}"
     state: "directory"
-    owner: "{{ lookup('env', 'USERNAME') }}"
-    group: "{{ lookup('env', 'USERNAME') }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
     mode: "0700"
   loop:
     - "keys"
@@ -31,7 +31,7 @@
 
 - name: Change owner of kubeconfig
   ansible.builtin.file:
-    path: "/var/lib/rancher/k3s/gen/{{ lookup('env', 'USERNAME') }}/kube/config"
-    owner: "{{ lookup('env', 'USERNAME') }}"
-    group: "{{ lookup('env', 'USERNAME') }}"
+    path: "/var/lib/rancher/k3s/gen/{{ username }}/kube/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
     mode: "0600"
