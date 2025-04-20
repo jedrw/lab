@@ -26,6 +26,35 @@
     path: /etc/pve/datacenter.cfg
     line: "migration: insecure,network=10.0.20.0/26"
 
+- name: Install lm-sensors
+  ansible.builtin.package:
+    name: lm-sensors
+    state: present
+
+- name: Add influx token
+  ansible.builtin.lineinfile:
+    path: /etc/pve/priv/metricserver/influxdb.pw
+    line: "{{ lookup('env', 'PROXMOX_INFLUX_TOKEN') }}"
+    create: true
+    mode: "0600"
+  when: inventory_hostname == "tc-01"
+
+- name: Configure metric server
+  ansible.builtin.lineinfile:
+    path: /etc/pve/status.cfg
+    line: |
+      influxdb: influxdb
+              port 8086
+              server qdocker.lupinelab
+              bucket proxmox
+              influxdbproto http
+              organization lupinelab
+    create: true
+    mode: "0640"
+    unsafe_writes: true
+    state: present
+  when: inventory_hostname == "tc-01"
+
 - name: Copy kproximate template creation script
   ansible.builtin.copy:
     src: create_kproximate_template_exec

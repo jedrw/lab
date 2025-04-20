@@ -38,3 +38,4 @@
     - thunderbolt_mesh_network
     - proxmox_cluster
     - ceph
+    - telegraf

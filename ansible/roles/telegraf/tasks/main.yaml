@@ -1,0 +1,29 @@
+- name: Add influx apt key
+  ansible.builtin.apt_key:
+    url: https://repos.influxdata.com/influxdata-archive.key
+    keyring: /etc/apt/trusted.gpg.d/influxdata-archive.gpg
+    state: present
+
+- name: Add influx repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main"
+    state: present
+    filename: infuxdb
+
+- name: Install telegraf
+  ansible.builtin.package:
+    name: telegraf
+    state: present
+
+- name: Configure telegraf
+  ansible.builtin.template:
+    src: "{{ telegraf_config_file | default(inventory_hostname) }}.telegraf.conf"
+    dest: /etc/telegraf/telegraf.conf
+    mode: "0644"
+  notify: Restart telegraf
+
+- name: Enable telegraf
+  ansible.builtin.service:
+    name: telegraf
+    state: started
+    enabled: true
