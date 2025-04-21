@@ -17,13 +17,69 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
 
   const releaseName = "prometheus";
   const grafanaHostname = "prometheus-grafana.lupinelab.co.uk";
+  const prometheusInternalHostname = "prometheus.lupinelab.co.uk";
+
+  const namespace = new kubernetes.core.v1.Namespace(
+    `${releaseName}-namespace`,
+    {
+      metadata: {
+        name: releaseName,
+      },
+    },
+    {
+      ...k3sOpts,
+      dependsOn,
+    },
+  );
+
+  const authSecret = new kubernetes.core.v1.Secret(
+    `${releaseName}-auth-secret`,
+    {
+      metadata: {
+        name: `${releaseName}-auth`,
+        namespace: namespace.metadata.name,
+      },
+      type: "kubernetes.io/basic-auth",
+      stringData: {
+        username: secrets.map["PROMETHEUS_USERNAME"],
+        password: secrets.map["PROMETHEUS_PASSWORD"],
+      },
+    },
+    {
+      ...k3sOpts,
+      dependsOn,
+    },
+  );
+
+  const authMiddleware = new kubernetes.apiextensions.CustomResource(
+    `${releaseName}-auth-middleware`,
+    {
+      apiVersion: "traefik.containo.us/v1alpha1",
+      kind: "Middleware",
+      metadata: {
+        name: `${releaseName}-auth`,
+        namespace: namespace.metadata.name,
+      },
+      spec: {
+        basicAuth: {
+          removeHeader: true,
+          secret: authSecret.metadata.name,
+        },
+      },
+    },
+    {
+      ...k3sOpts,
+      dependsOn,
+    },
+  );
+
   const prometheusRelease = new kubernetes.helm.v3.Release(
     releaseName,
     {
       name: releaseName,
       chart: "kube-prometheus-stack",
-      namespace: releaseName,
-      createNamespace: true,
+      namespace: namespace.metadata.name,
+      createNamespace: false,
       repositoryOpts: {
         repo: "https://prometheus-community.github.io/helm-charts",
       },
@@ -49,6 +105,24 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
                 },
               },
             },
+          },
+          ingress: {
+            enabled: true,
+            annotations: {
+              "traefik.ingress.kubernetes.io/router.entrypoints":
+                DEFAULT_TRAEFIK_ENTRYPOINT,
+              "dns.pfsense.org/enabled": "true",
+              "cert-manager.io/cluster-issuer": DEFAULT_CLUSTERISSUER,
+              "traefik.ingress.kubernetes.io/router.middlewares": pulumi.interpolate`${namespace.metadata.name}-${authMiddleware.metadata.name}@kubernetescrd`,
+            },
+            hosts: [prometheusInternalHostname],
+            paths: ["/"],
+            tls: [
+              {
+                hosts: [prometheusInternalHostname],
+                secretName: `${prometheusInternalHostname}-cert`,
+              },
+            ],
           },
         },
         grafana: {
