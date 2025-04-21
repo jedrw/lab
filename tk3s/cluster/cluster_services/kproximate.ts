@@ -141,5 +141,32 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
     },
   );
 
+  new kubernetes.apiextensions.CustomResource(`${releaseName}-monitor`, {
+    apiVersion: "monitoring.coreos.com/v1",
+    kind: "ServiceMonitor",
+    metadata: {
+      name: releaseName,
+      namespace: release.namespace,
+      labels: {
+        release: "prometheus",
+      },
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          "app.kubernetes.io/component": "kproximate-controller",
+        },
+      },
+      endpoints: [
+        {
+          port: "http",
+        },
+      ],
+      namespaceSelector: {
+        matchNames: [release.namespace],
+      },
+    },
+  });
+
   return release;
 };
