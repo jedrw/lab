@@ -36,6 +36,7 @@ export const registry = async (dependsOn: pulumi.Resource[]) => {
           annotations: {
             "traefik.ingress.kubernetes.io/router.entrypoints":
               DEFAULT_TRAEFIK_ENTRYPOINT,
+            "dns.pfsense.org/enabled": "true",
             "external-dns.alpha.kubernetes.io/hostname": hostname,
             "external-dns.alpha.kubernetes.io/target": CLOUDFLARE_TARGET_RECORD,
             "external-dns.alpha.kubernetes.io/cloudflare-proxied": "true",
