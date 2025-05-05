@@ -34,13 +34,13 @@ export const kubernetesPfsenseController = async (
           enabled: true,
           plugins: {
             metallb: {
-              enabled: true,
+              enabled: false,
               "bgp-implementation": "frr",
               nodeLabelSelector: "node-role.kubernetes.io/control-plane=true",
               options: {
                 frr: {
                   template: {
-                    peergroup: "tks3",
+                    peergroup: "tk3s",
                   },
                 },
               },
