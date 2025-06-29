@@ -101,7 +101,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
     releaseName,
     {
       chart: "oci://ghcr.io/jedrw/kproximate",
-      version: "0.2.2",
+      version: "0.2.3",
       name: releaseName,
       createNamespace: true,
       namespace: releaseName,
