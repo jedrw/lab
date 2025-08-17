@@ -16,7 +16,8 @@ spec:
     ports:
       kubernetes:
         port: 6443
-        expose: true
+        expose: 
+          default: true
         exposedPort: 6443
         protocol: TCP
         tls:
