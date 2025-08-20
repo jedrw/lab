@@ -49,12 +49,14 @@ export const externalDns = async (dependsOn: pulumi.Resource[]) => {
         provider: {
           name: "cloudflare",
         },
-        sources: ["ingress"],
+        sources: ["ingress", "traefik-proxy"],
         extraArgs: [
           // With the below two flags, only ingresses with hostname annotations will get records.
           "--ignore-ingress-rules-spec",
           "--ignore-ingress-tls-spec",
           "--cloudflare-proxied",
+          // This is required else external-dns crashes while trying to sync the deprecated legacy traefik CRDs
+          "--traefik-disable-legacy",
         ],
         env: [
           {
