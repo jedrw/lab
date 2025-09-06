@@ -1,6 +1,7 @@
 all:
   vars:
     username: jedrw
+    backup_host: qkourum
   hosts:
   children:
     proxmox_nodes:
@@ -40,10 +41,16 @@ all:
               mountpoint: /tcdata
           nfs_shares:
             - mrrothmanmaths
+            - dev-mrrothmanmaths
             - ombi
             - portainer
         qdocker:
           ansible_host: 192.168.20.7
+      vars:
+        ansible_user: jedrw
+    backup:
+      hosts:
+        qkourum:
       vars:
         ansible_user: jedrw
     tk3s:

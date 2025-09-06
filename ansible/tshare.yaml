@@ -5,11 +5,15 @@
   vars_files:
     - roles/rclone/vars/main.yaml
   roles:
+    - common
+    - user
     - hostname
+    - postfix_relay
+    - gen_backup_sshkey
     - unattended_upgrades
     - disks
     - mounts
     - smbd
     - nfs
-    # - stefangweichinger.ansible_rclone
-    # - cron
+    - stefangweichinger.ansible_rclone
+    - cron
