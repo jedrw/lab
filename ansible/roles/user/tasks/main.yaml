@@ -10,5 +10,6 @@
     path: /etc/aliases
     regexp: '^{{ lookup("env", "USERNAME") }}:'
     line: '{{ lookup("env", "USERNAME") }}: {{ lookup("env", "USERNAME") }}@lupinelab.co.uk'
+    mode: "0644"
   notify:
     - Newaliases

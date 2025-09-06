@@ -6,7 +6,6 @@
     - roles/rclone/vars/main.yaml
   roles:
     - common
-    - user
     - hostname
     - postfix_relay
     - gen_backup_sshkey
