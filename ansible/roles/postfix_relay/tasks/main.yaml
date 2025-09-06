@@ -17,6 +17,7 @@
 
 - name: Set root alias (prod)
   ansible.builtin.lineinfile:
+    create: true
     path: /etc/aliases
     regexp: '^root:'
     line: 'root: root@lupinelab.co.uk'
@@ -26,6 +27,7 @@
 
 - name: Set root alias (test)
   ansible.builtin.lineinfile:
+    create: true
     path: /etc/aliases
     regexp: '^root:'
     line: 'root: root@lupinetest'

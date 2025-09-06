@@ -1,5 +1,14 @@
-- name: Set userpassword
+- name: Set user password
   ansible.builtin.user:
     name: "{{ lookup('env', 'USERNAME') }}"
     password: "{{ lookup('env', 'SMBPASSWD') | password_hash }}"
   no_log: true
+
+- name: Set user alias
+  ansible.builtin.lineinfile:
+    create: true
+    path: /etc/aliases
+    regexp: '^{{ lookup("env", "USERNAME") }}:'
+    line: '{{ lookup("env", "USERNAME") }}: {{ lookup("env", "USERNAME") }}@lupinelab.co.uk'
+  notify:
+    - Newaliases

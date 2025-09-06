@@ -18,10 +18,6 @@
   register: smbuser_exists
   changed_when: false
 
-- name: Debug
-  ansible.builtin.debug:
-    msg: "{{ smbuser_exists }}"
-
 - name: Create smb user and set password
   ansible.builtin.shell: "(echo {{ lookup('env', 'SMBPASSWD') }}; echo {{ lookup('env', 'SMBPASSWD') }}) | smbpasswd -a -s {{ lookup('env', 'USERNAME') }}"
   register: output

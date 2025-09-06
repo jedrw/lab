@@ -40,9 +40,9 @@
   when: inventory_hostname == "tc-01"
 
 - name: Configure metric server
-  ansible.builtin.lineinfile:
+  ansible.builtin.blockinfile:
     path: /etc/pve/status.cfg
-    line: |
+    block: |
       influxdb: influxdb
               port 8086
               server qdocker.lupinelab
