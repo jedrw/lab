@@ -21,6 +21,7 @@
     path: /etc/aliases
     regexp: '^root:'
     line: 'root: root@lupinelab.co.uk'
+    mode: "0644"
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
   notify:
     - Newaliases
@@ -31,6 +32,7 @@
     path: /etc/aliases
     regexp: '^root:'
     line: 'root: root@lupinetest'
+    mode: "0644"
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'test'
   notify:
     - Newaliases
