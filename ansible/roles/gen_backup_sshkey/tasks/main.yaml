@@ -3,12 +3,12 @@
     path: "/home/{{ lookup('env', 'USERNAME') }}/.ssh/id_ed25519"
     type: ed25519
     owner: "{{ lookup('env', 'USERNAME') }}"
-  register: keypair
+  register: gen_backup_sshkey_keypair
 
 - name: Add public key to backup host
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ lookup('env', 'USERNAME') }}"
     state: present
-    key: "{{ keypair.public_key }}"
+    key: "{{ gen_backup_sshkey_keypair.public_key }}"
   delegate_to: "{{ backup_host }}"
   become: false

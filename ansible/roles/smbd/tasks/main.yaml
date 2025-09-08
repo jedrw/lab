@@ -15,13 +15,13 @@
 - name: Check smb user exists
   ansible.builtin.command:
     cmd: sudo pdbedit -L
-  register: smbuser_exists
+  register: smbd_user_exists
   changed_when: false
 
 - name: Create smb user and set password
   ansible.builtin.shell: "(echo {{ lookup('env', 'SMBPASSWD') }}; echo {{ lookup('env', 'SMBPASSWD') }}) | smbpasswd -a -s {{ lookup('env', 'USERNAME') }}"
-  register: output
+  register: smbd_output
   no_log: true
-  when: smbuser_exists.stdout is not match(lookup('env', 'USERNAME'))
-  changed_when: output.rc == 0
+  when: smbd_user_exists.stdout is not match(lookup('env', 'USERNAME'))
+  changed_when: smbd_output.rc == 0
   ignore_errors: true

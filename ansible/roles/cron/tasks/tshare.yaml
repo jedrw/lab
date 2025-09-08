@@ -4,7 +4,15 @@
     minute: '0'
     hour: '0'
     user: root
-    job: rsync -av --mkpath --del /tcdata/ --exclude=data/Downloads/** -e "ssh -i /home/{{ lookup('env', 'USERNAME') }}/.ssh/id_ed25519" {{ lookup('env', 'USERNAME') }}@{{ backup_host }}.lupinedmz:/lupinebackup/tcdata/
+    job: |
+      rsync \
+      -av \
+      --mkpath \
+      --del \
+      /tcdata/ \
+      --exclude=data/Downloads/** \
+      -e "ssh -i /home/{{ lookup('env', 'USERNAME') }}/.ssh/id_ed25519" \
+      {{ lookup('env', 'USERNAME') }}@{{ backup_host }}.lupinedmz:/lupinebackup/tcdata/
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
 
 - name: Add gdrive backup cron
