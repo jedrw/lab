@@ -1,0 +1,14 @@
+{
+  "name": "tdocker",
+  "main": "index.ts",
+  "devDependencies": {
+    "@muhlba91/pulumi-proxmoxve": "^7.5.0",
+    "@pulumi/command": "^1.0.1",
+    "@pulumiverse/doppler": "^0.9.0",
+    "@types/node": "^18",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@pulumi/pulumi": "^3.113.0"
+  }
+}

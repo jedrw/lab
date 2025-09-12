@@ -1,8 +1,8 @@
 - name: Install docker
   ansible.builtin.package:
     name:
-      - docker
-      - docker-compose
+      - docker.io
+      - docker-compose-v2
     state: present
 
 - name: Add user to docker group
@@ -39,7 +39,4 @@
   ansible.builtin.include_tasks:
     file: "containers.yaml"
   when: >
-    inventory_hostname == "qdocker"
-
-  # lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
-  # and inventory_hostname == "qdocker"
+    lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod' and inventory_hostname == "tdocker"

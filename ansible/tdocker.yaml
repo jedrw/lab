@@ -1,24 +1,31 @@
-- name: Build/Configure qdocker
-  hosts: qdocker
+- name: Build/Configure tdocker
+  hosts: tdocker
   become: true
+
   pre_tasks:
-    - name: Configure DMZ ethernet adapter
+    - name: Configure HBVLAN ethernet adapter
       ansible.builtin.template:
         src: roles/docker/templates/99-ens19.yaml.j2
         dest: /etc/netplan/99-ens19.yaml
         owner: root
         group: root
         mode: "0644"
+      notify: Netplan apply
 
+  roles:
+    - common
+    - hostname
+    - postfix_relay
+    - unattended_upgrades
+    - disks
+    - mounts
+    - smb_mounts
+    - docker
+    # - cron
+
+  handlers:
     - name: Netplan apply
       ansible.builtin.command:
         cmd: netplan apply
       register: output
       changed_when: output.rc == 0
-
-  roles:
-    - common
-    - user
-    - mounts
-    - docker
-    - cron

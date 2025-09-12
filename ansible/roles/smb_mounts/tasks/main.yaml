@@ -1,0 +1,3 @@
+- name: Import mount list for hosts
+  ansible.builtin.include_tasks:
+    file: "{{ ansible_hostname | lower }}.yaml"

@@ -1,0 +1,23 @@
+- name: Install cifs_utils
+  ansible.builtin.package:
+    name: cifs-utils
+    state: present
+
+- name: Add .smbcredentials file
+  ansible.builtin.template:
+    src: .smbcredentials.j2
+    dest: "/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials"
+    owner: root
+    group: root
+    mode: "0640"
+  no_log: true
+
+- name: Mount smb shares
+  ansible.posix.mount:
+    src: "{{ item.src }}"
+    path: "{{ item.path }}"
+    fstype: cifs
+    opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
+    state: mounted
+  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
+  loop: "{{ smb_mounts }}"

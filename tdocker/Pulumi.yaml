@@ -1,0 +1,6 @@
+name: tdocker
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: A minimal TypeScript Pulumi program

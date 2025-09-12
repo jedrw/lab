@@ -8,7 +8,7 @@ services:
         ports:
             - '9090:8080'
         volumes:
-            - '/$HOME/docker/davos/config:/config'
+            - '$HOME/docker-containers/davos/config:/config'
             - '/media/Downloads:/Downloads'
         restart: unless-stopped
         image: linuxserver/davos

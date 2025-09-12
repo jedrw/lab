@@ -2,7 +2,7 @@
   ansible.builtin.uri:
     url: https://api.github.com/repos/lupinelab/dockerupdate/releases/latest
     return_content: true
-  register: latest_release
+  register: docker_latest_release
 
 - name: Make a workdir
   ansible.builtin.file:
@@ -12,7 +12,7 @@
 
 - name: Download dockerupdate
   ansible.builtin.get_url:
-    url: "{{ latest_release.json.assets[0].browser_download_url }}"
+    url: "{{ docker_latest_release.json.assets[0].browser_download_url }}"
     dest: /tmp/dockerupdate/dockerupdate.tar.gz
     mode: "0700"
 
@@ -23,19 +23,11 @@
     dest: /tmp/dockerupdate
 
 - name: Install dockerupdate
-  ansible.builtin.command:
-    chdir: /tmp/dockerupdate/
-    cmd: "python3 install.py"
-  register: output
-  changed_when: output.rc == 0
-  failed_when: output.rc != 0
-
-- name: Make $HOME/docker dir
-  ansible.builtin.file:
-    path: "/home/{{ lookup('env', 'USERNAME') }}/docker"
-    state: directory
+  ansible.builtin.copy:
+    src: /tmp/dockerupdate/dockerupdate
+    remote_src: true
+    dest: /usr/local/bin/dockerupdate
     mode: "0755"
-  become: false
 
 - name: Remove workdir
   ansible.builtin.file:

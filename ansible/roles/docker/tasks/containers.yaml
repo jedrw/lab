@@ -1,34 +1,24 @@
 - name: Create container folder
   ansible.builtin.file:
-    path: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}"
+    path: "/home/{{ lookup('env', 'USERNAME') }}/docker-containers/{{ item }}"
     state: directory
     owner: "{{ lookup('env', 'USERNAME') }}"
     group: "{{ lookup('env', 'USERNAME') }}"
     mode: "0770"
   become: false
   loop: "{{ containers }}"
-  when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'test'
-
-- name: Check container folder exists
-  ansible.builtin.stat:
-    path: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}"
-  register: folder
-  loop: "{{ containers }}"
 
 - name: Copy docker-compose file
   ansible.builtin.copy:
     src: "{{ item }}.yml"
-    dest: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}/docker-compose.yml"
+    dest: "/home/{{ lookup('env', 'USERNAME') }}/docker-containers/{{ item }}/docker-compose.yml"
     mode: "0660"
   become: false
   loop: "{{ containers }}"
-  loop_control:
-    extended: true
-  when: folder.results[ansible_loop.index0].stat.exists
 
 - name: Create and start container
-  community.docker.docker_compose:
-    project_src: "/home/{{ lookup('env', 'USERNAME') }}/docker/{{ item }}"
-    pull: true
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ lookup('env', 'USERNAME') }}/docker-containers/{{ item }}"
+    pull: always
   become: false
   loop: "{{ containers }}"

@@ -44,8 +44,22 @@ all:
             - dev-mrrothmanmaths
             - ombi
             - portainer
-        qdocker:
-          ansible_host: 192.168.20.7
+        tdocker:
+          ansible_host: 192.168.20.8
+          additional_disks:
+            # Pretty sure this doesnt need to exist
+            - device: vdb
+              mountpoint: /home/jedrw/docker/influxdb
+            - device: vdc
+              mountpoint: /home/jedrw/docker-containers
+              owner: jedrw
+          smb_mounts:
+            - src: //tshare.lupinelab/data/Backup
+              path: /mnt/Backup
+            - src: //tshare.lupinelab/data/Downloads
+              path: /media/Downloads
+          containers:
+            - davos
       vars:
         ansible_user: jedrw
     backup:
