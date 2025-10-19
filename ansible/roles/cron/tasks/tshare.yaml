@@ -1,26 +1,19 @@
 - name: Add backup cron
   ansible.builtin.cron:
     name: main backup
-    minute: '0'
-    hour: '0'
+    minute: "0"
+    hour: "0"
     user: root
     job: |
-      rsync \
-      -av \
-      --mkpath \
-      --del \
-      /tcdata/ \
-      --exclude=data/Downloads/** \
-      -e "ssh -i /home/{{ lookup('env', 'USERNAME') }}/.ssh/id_ed25519" \
-      {{ lookup('env', 'USERNAME') }}@{{ backup_host }}.lupinedmz:/lupinebackup/tcdata/
+      rsync -av --mkpath --del /tcdata/ --exclude=data/Downloads/** -e "ssh -i /home/{{ lookup('env', 'USERNAME') }}/.ssh/id_ed25519" {{ lookup('env', 'USERNAME') }}@{{ backup_host }}.lupinedmz:/lupinebackup/tcdata/
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
 
 - name: Add gdrive backup cron
   ansible.builtin.cron:
     name: gdrive backup
-    minute: '0'
-    hour: '1'
-    day: '1'
+    minute: "0"
+    hour: "1"
+    day: "1"
     user: "{{ lookup('env', 'USERNAME') }}"
-    job: 'rclone sync -v /tcdata/data gdrive:backup/data --exclude=Downloads/** --exclude=.Trash-1000/** --create-empty-src-dirs --delete-before'
+    job: "rclone sync -v /tcdata/data gdrive:backup/data --exclude=Downloads/** --exclude=.Trash-1000/** --create-empty-src-dirs --delete-before"
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
