@@ -1,11 +1,11 @@
-import * as pulumi from "@pulumi/pulumi";
-import * as kubernetes from "@pulumi/kubernetes";
-import * as doppler from "@pulumiverse/doppler";
-import * as random from "@pulumi/random";
 import * as proxmox from "@muhlba91/pulumi-proxmoxve";
+import * as kubernetes from "@pulumi/kubernetes";
+import * as pulumi from "@pulumi/pulumi";
+import * as random from "@pulumi/random";
+import * as doppler from "@pulumiverse/doppler";
 
-import { proxmoxOpts } from "../proxmox";
 import { k3sOpts } from "../kubernetes";
+import { proxmoxOpts } from "../proxmox";
 
 export const kproximate = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -101,7 +101,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
     releaseName,
     {
       chart: "oci://ghcr.io/jedrw/kproximate",
-      version: "0.2.3",
+      version: "0.3.0",
       name: releaseName,
       createNamespace: true,
       namespace: releaseName,
@@ -113,7 +113,7 @@ export const kproximate = async (dependsOn: pulumi.Resource[]) => {
             kpNodeMemory: 4096,
             kpNodeLabels:
               "topology.kubernetes.io/region=tc,topology.kubernetes.io/zone={{ .TargetHost }}",
-            kpNodeTemplateName: "kproximate-template",
+            kpNodeTemplateName: "kproximate-template-2025-08-18",
             kpQemuExecJoin: true,
             maxKpNodes: 6,
             pmDebug: false,

@@ -1,5 +1,5 @@
-import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
+import * as pulumi from "@pulumi/pulumi";
 import * as doppler from "@pulumiverse/doppler";
 import { k3sOpts } from "../kubernetes";
 
@@ -55,8 +55,6 @@ export const externalDns = async (dependsOn: pulumi.Resource[]) => {
           "--ignore-ingress-rules-spec",
           "--ignore-ingress-tls-spec",
           "--cloudflare-proxied",
-          // This is required else external-dns crashes while trying to sync the deprecated legacy traefik CRDs
-          "--traefik-disable-legacy",
         ],
         env: [
           {

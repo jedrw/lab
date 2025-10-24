@@ -1,13 +1,13 @@
-import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
+import * as pulumi from "@pulumi/pulumi";
 import * as doppler from "@pulumiverse/doppler";
 import * as fs from "fs";
-import { k3sOpts } from "../kubernetes";
 import {
   DEFAULT_CLUSTERISSUER,
   DEFAULT_TRAEFIK_ENTRYPOINT,
   PROXMOX_CSI_STORAGECLASS,
 } from "../constants";
+import { k3sOpts } from "../kubernetes";
 
 export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   const secrets = await doppler.getSecrets({
@@ -54,7 +54,7 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
   const authMiddleware = new kubernetes.apiextensions.CustomResource(
     `${releaseName}-auth-middleware`,
     {
-      apiVersion: "traefik.containo.us/v1alpha1",
+      apiVersion: "traefik.io/v1alpha1",
       kind: "Middleware",
       metadata: {
         name: `${releaseName}-auth`,
