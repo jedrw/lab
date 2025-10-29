@@ -42,15 +42,13 @@ all:
           nfs_shares:
             - mrrothmanmaths
             - dev-mrrothmanmaths
+            - brain
             - ombi
             - portainer
         tdocker:
           ansible_host: 192.168.20.8
           additional_disks:
-            # Pretty sure this doesnt need to exist
             - device: vdb
-              mountpoint: /home/jedrw/docker/influxdb
-            - device: vdc
               mountpoint: /home/jedrw/docker-containers
               owner: jedrw
           smb_mounts:
@@ -70,13 +68,13 @@ all:
     tk3s:
       hosts:
         k-c-01:
-          ansible_host: 192.168.200.31
+          ansible_host: k-c-01.lupinedmz
           mac: C2:8E:0D:EF:A7:5B
         k-c-02:
-          ansible_host: 192.168.200.32
+          ansible_host: k-c-02.lupinedmz
           mac: BA:73:6D:58:36:4B
         k-c-03:
-          ansible_host: 192.168.200.33
+          ansible_host: k-c-03.lupinedmz
           mac: 2E:A1:61:F3:07:8D
       vars:
         ansible_user: jedrw

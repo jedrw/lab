@@ -17,7 +17,7 @@
     src: "{{ item.src }}"
     path: "{{ item.path }}"
     fstype: cifs
-    opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,vers=3.0,noperm,noauto,nofail,x-systemd.automount
+    opts: credentials=/home/{{ lookup('env', 'USERNAME') }}/.smbcredentials,uid={{ lookup('env', 'USERNAME') }},gid={{ lookup('env', 'USERNAME') }},vers=3.0,noperm,noauto,nofail,x-systemd.automount
     state: mounted
   when: lookup('env', 'DOPPLER_ENVIRONMENT') == 'prod'
   loop: "{{ smb_mounts }}"
