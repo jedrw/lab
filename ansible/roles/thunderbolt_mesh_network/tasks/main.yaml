@@ -55,10 +55,12 @@
     mode: "0644"
 
 - name: Enable IPv4 forwarding
-  ansible.builtin.lineinfile:
-    path: /etc/sysctl.conf
-    insertafter: "^#net.ipv4.ip_forward=1"
-    line: net.ipv4.ip_forward=1
+  ansible.builtin.copy:
+    src: 50-thunderbolt-mesh.conf
+    dest: /etc/sysctl.d/50-thunderbolt-mesh.conf
+    mode: "0644"
+  notify:
+    - Reload sysctl
 
 - name: Install FRR
   ansible.builtin.package:

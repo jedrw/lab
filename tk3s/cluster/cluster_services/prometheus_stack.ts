@@ -180,8 +180,10 @@ export const prometheus = async (dependsOn: pulumi.Resource[]) => {
         },
       },
       data: {
-        "lokiDashboard.json": fs
-          .readFileSync("cluster_services/grafana_dashboards/loki.json")
+        "kubernetes-logs.json": fs
+          .readFileSync(
+            "cluster_services/grafana_dashboards/kubernetes-logs.json",
+          )
           .toString(),
       },
     },

@@ -1,6 +1,9 @@
 - name: Update initramfs
   ansible.builtin.command: update-initramfs -u -k all
 
+- name: Reload sysctl
+  ansible.builtin.command: sysctl --system
+
 - name: Restart FRR
   ansible.builtin.service:
     name: frr
