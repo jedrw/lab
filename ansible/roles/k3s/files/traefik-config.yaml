@@ -15,6 +15,12 @@ spec:
      - "--entrypoints.kubernetes.address=:6443/tcp"
      - "--entrypoints.brain-ssh.address=:2222/tcp"
     ports:
+      websecure:
+        transport:
+          respondingTimeouts:
+            readTimeout: 600s
+            writeTimeout: 600s
+            idleTimeout: 600s
       kubernetes:
         port: 6443
         expose: 

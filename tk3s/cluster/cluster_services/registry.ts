@@ -1,5 +1,5 @@
-import * as pulumi from "@pulumi/pulumi";
 import * as kubernetes from "@pulumi/kubernetes";
+import * as pulumi from "@pulumi/pulumi";
 import * as doppler from "@pulumiverse/doppler";
 import {
   CLOUDFLARE_TARGET_RECORD,
@@ -26,7 +26,7 @@ export const registry = async (dependsOn: pulumi.Resource[]) => {
       namespace: releaseName,
       createNamespace: true,
       repositoryOpts: {
-        repo: "https://helm.twun.io",
+        repo: "https://twuni.github.io/docker-registry.helm",
       },
       values: {
         ingress: {
