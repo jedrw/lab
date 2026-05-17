@@ -1,11 +1,11 @@
-import * as yaml from "yaml";
-import * as fs from "fs";
-import * as pulumi from "@pulumi/pulumi";
-import * as command from "@pulumi/command";
-import * as doppler from "@pulumiverse/doppler";
 import * as proxmox from "@muhlba91/pulumi-proxmoxve";
-import { proxmoxOpts } from "../proxmox";
+import * as command from "@pulumi/command";
+import * as pulumi from "@pulumi/pulumi";
+import * as doppler from "@pulumiverse/doppler";
+import * as fs from "fs";
+import * as yaml from "yaml";
 import { buildK3sOpts } from "../kubernetes";
+import { proxmoxOpts } from "../proxmox";
 
 export async function buildCluster(): Promise<pulumi.Resource[]> {
   let cluster: proxmox.vm.VirtualMachine[] = [];
@@ -45,6 +45,7 @@ export async function buildCluster(): Promise<pulumi.Resource[]> {
           },
           memory: {
             dedicated: 4096,
+            floating: 4096,
           },
           vga: { type: "std" },
           onBoot: true,

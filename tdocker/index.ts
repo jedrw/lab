@@ -30,6 +30,7 @@ export = async () => {
       },
       memory: {
         dedicated: 4096,
+        floating: 4096,
       },
       vga: { type: "std" },
       onBoot: true,
